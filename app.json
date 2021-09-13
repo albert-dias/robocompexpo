@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "robocompexpo",
+    "slug": "robocompexpo",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "robocompexpo"
+}
