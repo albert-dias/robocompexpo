@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "robocompexpo",
-    "slug": "robocompexpo",
+    "name": "robocomp",
+    "slug": "Robocomp",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ]
   },
-  "name": "robocompexpo"
+  "name": "robocomp"
 }
