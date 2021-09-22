@@ -16,7 +16,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 //  Import de páginas
-import { Input } from '../../components/Input';
 import Container, { ContainerTop } from '../../components/Container';
 import theme from '../../global/styles/theme';
 

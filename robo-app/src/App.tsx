@@ -22,6 +22,7 @@ import { RequestServices } from './pages/RequestServices';              //Pesqui
 import { SelectedService } from './pages/SelectedService';              //Serviço selecionado
 import { ClientRegister } from './pages/ClientRegister/Cadastro';       // Registro de Cliente
 import { UserTerms } from './pages/UserTerms';
+import { Login } from './pages/Login';
 
 export default function App() {
     const [fontsLoaded] = useFonts({
@@ -38,7 +39,7 @@ export default function App() {
         <ThemeProvider theme={theme}>
             <PaperProvider>
                 <StatusBar backgroundColor='transparent' barStyle='dark-content' translucent/>
-                <UserTerms />
+                <Login />
             </PaperProvider>
         </ThemeProvider>
     );

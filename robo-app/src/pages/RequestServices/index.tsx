@@ -17,7 +17,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Import de páginas
 import Container, { ContainerTop } from '../../components/Container';
-import { Input } from '../../components/Input';
+import { Input } from '../../components/GlobalCSS';
 import theme from "../../global/styles/theme";
 
 // Import de imagens
