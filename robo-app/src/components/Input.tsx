@@ -1,13 +1,17 @@
 // Import de pacotes
-import { View } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import { StyleSheet } from "react-native";
+import { TextInput } from "react-native-paper";
 import styled from "styled-components/native";
 
-// Import de páginas
-import theme from "../../global/styles/theme";
+const styles = StyleSheet.create({
+    textInput: {
+      backgroundColor: '#fff',
+    },
+  });
 
 interface InputProps {
     width?: string;
+    setValue: (value: string) => void;
 }
 
 export const Input = styled(TextInput) <InputProps>`

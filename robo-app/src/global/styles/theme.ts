@@ -6,6 +6,8 @@ export default {
         contrast2: '#01913E',
         contrast5: '#D8DF00',
         darkgray: '#9B9B9B',
+        disabledOrange: '#E08379',
+        google: '#FF3333',
         gradient:['#282D41','#03A4A9'],
         gray: '#F4F1F0',
         green: '#83A84A',
@@ -24,4 +26,4 @@ export default {
         regular:    'Manjari_400Regular',
         bold:       'Manjari_700Bold',
     }
-}
+};

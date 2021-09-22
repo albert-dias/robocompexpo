@@ -17,13 +17,13 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Import de páginas
 import Container, { ContainerTop } from '../../components/Container';
-import { Input } from './style';
+import { Input } from '../../components/Input';
 import theme from "../../global/styles/theme";
 
 // Import de imagens
 import imgBanner from '../../../assets/images/banner.png';
 import logo from '../../../assets/images/logo_branca_robocomp.png';
-import imgTeste from '../../../assets/images/jetpack_logo.png';
+import imgTeste from '../../../assets/images/jetpack_logo.png';     //Imagem de teste
 
 export function RequestServices() {
     // Variáveis
@@ -49,6 +49,19 @@ export function RequestServices() {
 
     // Funções de dentro da página
 
+    function currencyReal(numero) {
+        if (isNaN(numero)) {
+            return num = 'R$';
+        }
+
+        var num = 0;
+        num = parseFloat(numero).toFixed(2);
+        num = num.split('.');
+        num[0] = `R$ ${num[0].split(/(?=(?:...)*$)/).join('.')}`;
+        num = num.join(',');
+        return num;
+    }
+
     // Função para adicionar 3 dias ao mínimo pedido
     Date.prototype.addDays = function (days) {
         let date = new Date();
@@ -56,8 +69,9 @@ export function RequestServices() {
         return date;
     }
 
+    // Setar o tempo
     const onChangeTime = (event, selectedTime) => {
-        if(selectedTime === undefined){
+        if (selectedTime === undefined) {
             selectedTime = dia.addDays(3);
         }
         const currentTime = selectedTime || time;
@@ -67,8 +81,9 @@ export function RequestServices() {
         setPeriod(false);
     }
 
+    // Setar a data
     const onChangeDay = (event, selectedDate) => {
-        if(selectedDate === undefined){
+        if (selectedDate === undefined) {
             selectedDate = dia.addDays(3);
         }
         const currentDate = selectedDate || day;
@@ -79,6 +94,7 @@ export function RequestServices() {
 
     }
 
+    // Executa ao carregar a página
     useEffect(() => {
         setDate(dia.addDays(3));
         setTime(dia.addDays(3));
@@ -488,26 +504,26 @@ export function RequestServices() {
                                                         style={{ width: '20%', textAlign: 'center', marginHorizontal: 5 }}
                                                         mode='flat'
                                                         label="Dia"
-                                                        value={date.toString().substring(8,10)}
+                                                        value={date.toString().substring(8, 10)}
                                                         onFocus={() => setDay(true)}
                                                     />
                                                     <Input
                                                         style={{ width: '20%', textAlign: 'center', marginHorizontal: 5 }}
                                                         mode='flat'
                                                         label="Mês"
-                                                        value={date.toString().substring(4,7)}
+                                                        value={date.toString().substring(4, 7)}
                                                         onFocus={() => setDay(true)}
                                                     />
                                                     <Input
                                                         style={{ width: '20%', textAlign: 'center', marginHorizontal: 5 }}
                                                         mode='flat'
                                                         label="Ano"
-                                                        value={date.toString().substring(11,15)}
+                                                        value={date.toString().substring(11, 15)}
                                                         onFocus={() => setDay(true)}
                                                     />
                                                     <TouchableOpacity
                                                         style={{ alignSelf: 'center', marginLeft: 'auto', marginRight: '4%' }}
-                                                        onPress={() => {setHour(!hour); console.log('DATA: '+date);}}
+                                                        onPress={() => { setHour(!hour); console.log('DATA: ' + date); }}
                                                     >
                                                         <FontAwesome5
                                                             name='chevron-right'
@@ -530,7 +546,7 @@ export function RequestServices() {
                                                         style={{ width: '20%', textAlign: 'center', marginHorizontal: 5 }}
                                                         mode='flat'
                                                         label="Hora"
-                                                        value={date.toString().substring(16,18)}
+                                                        value={date.toString().substring(16, 18)}
                                                         onFocus={() => setPeriod(true)}
                                                         onChangeText={() => setPeriod(true)}
                                                     />
@@ -538,7 +554,7 @@ export function RequestServices() {
                                                         style={{ width: '20%', textAlign: 'center', marginHorizontal: 5 }}
                                                         mode='flat'
                                                         label="Minuto"
-                                                        value={date.toString().substring(19,21)}
+                                                        value={date.toString().substring(19, 21)}
                                                         onFocus={() => setPeriod(true)}
                                                         onChangeText={() => setPeriod(true)}
                                                     />
@@ -582,10 +598,6 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         padding: 3,
-    },
-    container: {
-        flex: 1,
-        backgroundColor: '#F4F1F0',
     },
     scrollView: {
         backgroundColor: '#F4F1F0',

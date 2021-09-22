@@ -20,6 +20,7 @@ import org.unimodules.core.interfaces.Package;
 import org.unimodules.core.interfaces.SingletonModule;
 import expo.modules.updates.UpdatesController;
 
+import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
 import com.facebook.react.bridge.JSIModulePackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 
@@ -34,6 +35,15 @@ public class MainApplication extends Application implements ReactApplication {
   );
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+    @Override
+    protected List<ReactPackage> getPackages() {
+        return Arrays.<ReactPackage>asList(
+            new MainReactPackage(),
+            ...
+            new RNGooglePlacesPackage() //<-- Add line
+        );
+    }
+    
     @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;

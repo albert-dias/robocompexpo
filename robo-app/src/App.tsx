@@ -1,7 +1,6 @@
 // Import de pacotes
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import {
     useFonts,
@@ -13,11 +12,16 @@ import { ThemeProvider } from 'styled-components';
 import AppLoading from 'expo-app-loading';
 
 // Import de páginas
-import { Home } from './pages/Home';
-import { Home as TIHome } from './pages/EmpresaTIHome';
-import theme from './global/styles/theme';
-import { AppLoading as AppLoad } from './AppLoading';
-import { RequestServices } from './pages/RequestServices';
+import { Home } from './pages/Home';                        //Home do cliente
+import { Home as TIHome } from './pages/EmpresaTIHome';     //Home do servidor
+import theme from './global/styles/theme';                  //Temas
+import { AppLoading as AppLoad } from './AppLoading';       //AppLoading
+
+// Páginas
+import { RequestServices } from './pages/RequestServices';              //Pesquisa de serviços
+import { SelectedService } from './pages/SelectedService';              //Serviço selecionado
+import { ClientRegister } from './pages/ClientRegister/Cadastro';       // Registro de Cliente
+import { UserTerms } from './pages/UserTerms';
 
 export default function App() {
     const [fontsLoaded] = useFonts({
@@ -33,7 +37,8 @@ export default function App() {
     return (
         <ThemeProvider theme={theme}>
             <PaperProvider>
-                <RequestServices />
+                <StatusBar backgroundColor='transparent' barStyle='dark-content' translucent/>
+                <UserTerms />
             </PaperProvider>
         </ThemeProvider>
     );

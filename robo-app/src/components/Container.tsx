@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { View } from 'react-native';
+import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 
 interface ContainerProps {
     padding: number;
@@ -24,7 +25,8 @@ export const Containerp = styled(View).attrs((p: ContainerProps) => p)`
 
 export const ContainerTop = styled(View).attrs((p: ContainerProps) => p)`
     padding: ${(p) => p.padding || 0}px;
-    background: #FFFAF7;  
+    margin-top: ${getStatusBarHeight()}px;
+    /* background: #FFFAF7;   */
 `;
 
 export default Container;
