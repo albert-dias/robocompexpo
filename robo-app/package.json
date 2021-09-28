@@ -9,7 +9,9 @@
   "dependencies": {
     "@expo-google-fonts/manjari": "^0.2.0",
     "@hookstate/core": "^3.0.11",
+    "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-community/datetimepicker": "3.5.2",
+    "@react-native-community/slider": "3.0.3",
     "@react-native-picker/picker": "react-native-picker/picker",
     "@react-navigation/native": "^6.0.2",
     "@types/react-native-linear-gradient": "^2.4.0",
@@ -23,9 +25,11 @@
     "expo-splash-screen": "~0.11.2",
     "expo-status-bar": "~1.0.4",
     "expo-updates": "~0.8.1",
+    "form-data": "^4.0.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "~0.63.4",
+    "react-native-flash-message": "^0.2.0",
     "react-native-geocoding": "^0.5.0",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-google-places": "^3.1.2",
@@ -37,11 +41,14 @@
     "react-native-paper": "^4.9.2",
     "react-native-reanimated": "~2.2.0",
     "react-native-screens": "~3.4.0",
+    "react-native-slider": "^0.11.0",
     "react-native-swiper": "^1.6.0",
     "react-native-unimodules": "~0.14.5",
     "react-native-web": "~0.13.12",
     "react-spring": "^9.2.4",
-    "styled-components": "^5.3.1"
+    "rn-fetch-blob": "^0.12.0",
+    "styled-components": "^5.3.1",
+    "url-join": "^4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

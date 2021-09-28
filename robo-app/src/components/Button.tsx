@@ -48,6 +48,10 @@ const StyledActivityIndicator = styled(ActivityIndicator)`
     padding: 12px;
 `;
 
+const StyledActivityIndicator2 = styled(ActivityIndicator)`
+  padding: 10px;
+`;
+
 export const Button: React.FC<Props> = ({
     text,
     onPress,
@@ -87,3 +91,42 @@ export const Button: React.FC<Props> = ({
         </ButtonWrapper>
     );
 }
+
+export const Button2: React.FC<Props> = ({
+    text,
+    onPress,
+    disabled,
+    children,
+    loading,
+    fullWidth,
+    activityIndicatorColor = theme.colors.white,
+    backgroundColor = disabled ? theme.colors.disabledOrange : theme.colors.orange,
+}) => {
+    const renderContent = () => (text ? (
+        <Text
+            style={{
+                fontSize: 11,
+                color: theme.colors.white,
+            }}
+        >
+            {text}
+        </Text>
+    ) : children);
+
+    return (
+        <ButtonWrapper
+            onPress={onPress}
+            disabled={disabled || loading}
+            fullWidth={fullWidth}
+            backgroundColor={backgroundColor}
+        >
+            <ButtonContent
+                hasText={text}
+            >
+                {loading ? (
+                    <StyledActivityIndicator2 color={activityIndicatorColor} />
+                ) : renderContent()}
+            </ButtonContent>
+        </ButtonWrapper>
+    );
+};

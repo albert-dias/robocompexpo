@@ -25,3 +25,13 @@ export const PanelTitle = styled(Title)`
     font-size: 25px;
     margin: 0 auto;
 `;
+
+export const TitleView = styled(View)``;
+
+export const TitleWrapper = styled(View)`
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    width: 100%;
+`;
