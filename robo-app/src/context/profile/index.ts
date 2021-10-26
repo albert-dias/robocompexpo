@@ -1,5 +1,5 @@
 // Import de pacotes
-import { createState as createStateLink } from "@hookstate/core";
+import { createStateLink } from "@hookstate/core";
 import FormData from "form-data";
 
 // Import de páginas

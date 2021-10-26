@@ -8,7 +8,7 @@ use RestApi\Controller\ApiController;
 
 /**
  * MyServicesCategories Controller
- * 
+ *
  * @property \App\Model\Table\MyServicesCategoriesTable $Services
  * @method \App\Model\Entity\MyServicesCategories[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
@@ -44,7 +44,7 @@ class MyServicesCategoriesController extends ApiController
         }
         return $object;
     }
-    
+
     public function arrayToArrayObj($arr){
         $arr2 = [];
         foreach ($arr as $key => $value){
@@ -58,7 +58,7 @@ class MyServicesCategoriesController extends ApiController
     {
         //EM LOCALHOST MUDAR PARA O SEU IP
         // $url = 'https://grupoecomp.corpstek.com.br/robo-admin/webroot/';     //em produção
-        $url = 'http://192.168.88.56/robo-comp/robo-admin/webroot/';            //localhost
+        $url = 'http://192.168.88.71/robo-comp/robo-admin/webroot/';            //localhost
         // $url = 'http://192.168.88.170/robo-comp/robo-admin/webroot';
 
         $categories = $this->MyServicesCategories->find()
@@ -106,13 +106,13 @@ class MyServicesCategoriesController extends ApiController
                     WHERE users_categories.categorie_id = my_services_categories.id
                     AND users_categories.user_id = '.$token->id.'
                     ORDER BY my_services_categories.id ASC';
-            
+
             $sql2 = 'SELECT * FROM subcategories INNER JOIN my_services_categories INNER JOIN users_categories
                     WHERE users_categories.categorie_id = my_services_categories.id
                     AND subcategories.category_id = my_services_categories.id
                     AND users_categories.user_id = '.$token->id.'
                     ORDER BY my_services_categories.id ASC';
-            
+
             $categories = $this->query($sql);
             $subcategories = $this->query($sql2);
             $this->apiResponse['categories'] = $categories;
@@ -147,7 +147,7 @@ class MyServicesCategoriesController extends ApiController
             $filter = $table->find()->where([
                 'category_name' => $search,
             ])->first();
-            
+
             $filter2 = $table2->find()->where([
                 'category_id' => $filter->id,
                 'active' => '1',

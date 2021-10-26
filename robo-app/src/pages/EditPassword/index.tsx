@@ -4,7 +4,7 @@ import { Group, Image, ImageBackground, ScrollView, TouchableNativeFeedback, Vie
 import { Button, Text } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { hideMessage, showMessage } from 'react-native-flash-message';
-import { useState as useStateLinkUnmounted } from '@hookstate/core';
+import { useStateLinkUnmounted } from '@hookstate/core';
 import { useNavigation } from '@react-navigation/native';
 
 // Import de páginas

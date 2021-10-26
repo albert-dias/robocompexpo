@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Image, TouchableNativeFeedback, View } from 'react-native';
 import { animated, useSpring } from 'react-spring';
 import * as easings from 'd3-ease';
-import { useState as useStateLink } from '@hookstate/core';
+import { useStateLink } from '@hookstate/core';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { showMessage } from 'react-native-flash-message';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';

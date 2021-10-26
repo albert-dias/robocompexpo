@@ -28,7 +28,7 @@ class UsersCategoriesController extends ApiController
         $client = $this->Clients->get($token->id);
         //EM LOCALHOST MUDAR PARA O SEU IP
         // $url = 'https://grupoecomp.corpstek.com.br/robo-admin';      //em produção
-        $url = 'http://192.168.88.56/robo-comp/robo-admin';             //localhost
+        $url = 'http://192.168.88.71/robo-comp/robo-admin';             //localhost
         // $url = 'http://192.168.88.170/robo-comp/robo-admin';
 
         /* SELECT categories.* FROM categories
@@ -38,7 +38,7 @@ class UsersCategoriesController extends ApiController
 
         $client_id = $client->id;
         $sql = 'SELECT users_categories.*, categories.name, categories.url_icon FROM categories INNER JOIN users_categories ON categories.id = users_categories.categorie_id INNER JOIN users ON users.id = users_categories.user_id INNER JOIN clients ON clients.person_id = users.person_id WHERE clients.id = ' . $client_id;
-        
+
         $userCategories = $this->query($sql);
 
         foreach ($userCategories as $value) {
@@ -57,23 +57,23 @@ class UsersCategoriesController extends ApiController
 		$object = (object) [];
 		foreach ($arr as $key => $value)
 		{
-			if(is_float($value) && strlen($value) <= 8) { $value = (float)$value;} 
-		
-			if(is_int($value) && strlen($value) <= 8) { $value = (int)$value;} 
+			if(is_float($value) && strlen($value) <= 8) { $value = (float)$value;}
+
+			if(is_int($value) && strlen($value) <= 8) { $value = (int)$value;}
 			$object->$key = $value;
 		}
 		return $object;
 	}
-	
+
 	public function arrayToArrayObj($arr){
 		$arr2 = [];
-		foreach ($arr as $key => $value){ 
+		foreach ($arr as $key => $value){
 			$value2 = $this->arrayToObj($value);
 			array_push($arr2,$value2);
 		}
 		return $arr2;
     }
-    
+
     public function updatePrices() {
         $token = $this->jwtPayload;
         $client = $this->Clients->get($token->id);

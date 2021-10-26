@@ -1,4 +1,4 @@
-import { RequestServices } from "../pages/RequestServices";
+import { RequestServices } from "../pages/Services/list";
 
 type Request<T, messageErrorProp extends 'msg_erro' | 'message' = 'message'> = {
     status: true;

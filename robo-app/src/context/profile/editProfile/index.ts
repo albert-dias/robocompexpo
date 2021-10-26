@@ -1,4 +1,4 @@
-import { createState as createStateLink } from '@hookstate/core';
+import { createStateLink } from '@hookstate/core';
 import Profile from '../../../interfaces/Profile';
 import request from '../../../util/request';
 import Request from '../../../interfaces/Request';

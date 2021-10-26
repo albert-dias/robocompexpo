@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@types/styled-components": "^5.1.14",
-    "@types/styled-components-react-native": "^5.1.1",
-    "undefined": "react-native-picker/picker"
-  }
-}

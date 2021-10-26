@@ -1,13 +1,13 @@
 import FormData from "form-data";
 import urljoin from 'url-join';
-import { useState as useStateLinkUnmounted } from "@hookstate/core";
+import { useStateLinkUnmounted } from "@hookstate/core";
 import RNFetchBlob from "rn-fetch-blob";
 
 import GlobalContext from "../context";
 import auth from "../context/auth";
 
 //EM LOCALHOST MUDAR PARA O SEU IP
-const API_URL = 'https://192.168.88.57/robocompexpo/robo-api';
+const API_URL = 'https://192.168.88.71/robocompexpo/robo-api';
 
 const getAuthorizationHeader = () => {
     const authState = useStateLinkUnmounted(GlobalContext.auth.authStateRef);

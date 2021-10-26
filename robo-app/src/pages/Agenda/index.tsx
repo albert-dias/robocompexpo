@@ -15,7 +15,7 @@ import { Checkbox, Dialog, Portal, Text } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { useState as useStateLink, useState as useStateLinkUnmounted } from '@hookstate/core';
+import { useStateLink, useStateLinkUnmounted } from '@hookstate/core';
 
 // Import de páginas
 import { Input } from '../../components/GlobalCSS';
@@ -208,7 +208,7 @@ export function Agenda() {
                             setShow(true);
                         }}>
                         <LinearGradient
-                            colors={['#03A4A9', '#282D41']}
+                            colors={theme.colors.gradientInvert}
                             start={{ x: 0.0, y: 1.0 }}
                             end={{ x: 1.0, y: 1.0 }}
                             style={styles.buttonBorder}

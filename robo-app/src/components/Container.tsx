@@ -1,5 +1,5 @@
-import styled from 'styled-components/native';
 import { View } from 'react-native';
+import styled from 'styled-components/native';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 
 interface ContainerProps {

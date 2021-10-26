@@ -1,5 +1,5 @@
 // Import de pacotes
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
@@ -10,6 +10,7 @@ import Container from '../../components/Container';
 import theme from '../../global/styles/theme';
 
 export function UserTerms() {
+
     return (
         <Container style={styles.container}>
             <View style={styles.top}>
@@ -18,7 +19,7 @@ export function UserTerms() {
                         name='chevron-left'
                         color={theme.colors.black}
                         size={40}
-                        onPress={() => {}}
+                        onPress={() => { }}
                     />
                 </TouchableOpacity>
                 <Text style={styles.title}>TERMOS DE USO</Text>

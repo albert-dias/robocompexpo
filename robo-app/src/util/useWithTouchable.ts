@@ -1,4 +1,4 @@
-import { State as StateRef, useState as useStateLink } from '@hookstate/core';
+import { StateRef, useStateLink } from '@hookstate/core';
 import { useState } from 'react';
 
 const useWithTouchable = <T>(ref: StateRef<T>) => {

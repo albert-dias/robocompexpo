@@ -1,4 +1,4 @@
-import { useState as useStateLink } from "@hookstate/core";
+import { useStateLink } from "@hookstate/core";
 import GlobalContext from "../context";
 import { StateUser } from "../context/auth";
 import storage from "./storage";

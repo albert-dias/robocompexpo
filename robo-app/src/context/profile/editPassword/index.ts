@@ -1,4 +1,4 @@
-import { createState as createStateLink } from "@hookstate/core";
+import { createStateLink } from "@hookstate/core";
 
 const userInputRef = createStateLink('');
 const oldPasswordRef = createStateLink('');

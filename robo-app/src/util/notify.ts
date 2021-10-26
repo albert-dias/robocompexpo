@@ -9,7 +9,7 @@ const notify = (text: string, type: 'error' | 'success') => {
         },
     } = GlobalContext;
 
-    const visible = visibleRef;
+    const visible = visibleRef.nested("access");
     const message = messageRef;
     const isError = isErrorRef;
 
