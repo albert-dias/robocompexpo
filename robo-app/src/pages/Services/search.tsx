@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         fontSize: 20,
-        fontFamily: 'Manjari-Bold',
+        fontFamily: theme.fonts.bold,
         color: 'white',
         textAlign: 'center',
     },

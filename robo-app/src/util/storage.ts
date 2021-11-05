@@ -6,7 +6,6 @@ interface Storage {
     user?: StateUser;
 }
 
-
 const setToken = async (token: string) => AsyncStorage.setItem('token', token);
 
 const setUser = async (user: StateUser) => {

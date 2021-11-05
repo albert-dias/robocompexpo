@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import urljoin from 'url-join';
 import { useStateLinkUnmounted } from "@hookstate/core";
-import RNFetchBlob from "rn-fetch-blob";
+// import RNFetchBlob from "rn-fetch-blob";
 
 import GlobalContext from "../context";
 import auth from "../context/auth";
@@ -114,43 +114,9 @@ const authPost = async <T>(path: string, formData?: BodyFormData): Promise<T> =>
     return response;
 };
 
-const authUploadImage = async (path: string, body: BodyUploadImage[]) => {
-    const { headers } = getAuthorizationHeader();
-    const method = 'POST';
-    const authState = useStateLinkUnmounted(GlobalContext.auth.authStateRef);
-    const url = urljoin(API_URL, path, `?token=${authState.value.token}`);
-    const response = await RNFetchBlob.config({
-        fileCache: true,
-    }).fetch(method, url, headers, body.map((i) => ({
-        ...i,
-        data: RNFetchBlob.wrap(i.data),
-    })));
-    const { status } = response.info();
-    if (status === 200) {
-        return true;
-    }
-
-    return false;
-};
-
-const authGeneric = async (path: string, body?: FormData) => {
-    const authState = useStateLinkUnmounted(GlobalContext.auth.authStateRef);
-    const url = urljoin(API_URL, path, `?token=${authState.value.token}`);
-    const method = 'POST';
-
-    const { headers } = getAuthorizationHeader();
-    const request = await RNFetchBlob.config({
-        fileCache: true,
-    }).fetch(method, url, headers, body);
-
-    return request;
-};
-
 export default {
     get,
     authGet,
     post,
     authPost,
-    authUploadImage,
-    authGeneric,
 };

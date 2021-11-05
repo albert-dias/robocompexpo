@@ -30,7 +30,7 @@ import logo from '../../../assets/images/logo_branca_robocomp.png';
 
 export function Agenda() {
     // Variáveis
-    const authState = useStateLinkUnmounted(GlobalContext.auth.authStateRef);
+    // const authState = useStateLinkUnmounted(GlobalContext.auth.authStateRef);
 
     const [horarios, setHorarios] = useState([]);
     const [horaStart, setHoraStart] = useState(new Date());
@@ -96,7 +96,7 @@ export function Agenda() {
         setShowEdit3(false);
     };
 
-    const setAllWork = async () => {
+    /* const setAllWork = async () => {
         try {
             const response = request.authGet('Worktime/setAllWorkTime');
             setHorarios(response.result.horarios);
@@ -126,7 +126,7 @@ export function Agenda() {
                 [{ text: 'OK', onPress: () => { } }]
             );
         }
-    }
+    } */
 
     function setChecks() {
         setChecked0(false);
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollView: {
-        backgroundColor: '#F4F1F0',
+        backgroundColor: theme.colors.white,
         marginHorizontal: 0,
         flexGrow: 1,
         height: '100%',
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
         height: 'auto',
     },
     buttonText: {
-        color: '#fff',
+        color: theme.colors.whitepure,
         fontSize: 20,
     },
     buttonBorder: {
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#fff',
+        borderColor: theme.colors.whitepure,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginHorizontal: 5,
-        borderColor: '#f00',
+        borderColor: theme.colors.red,
         backgroundColor: 'rgba(255,0,0,0.25)',
     },
     touchDialog2: {
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginHorizontal: 5,
-        borderColor: '#0a0',
+        borderColor: theme.colors.green2,
         backgroundColor: 'rgba(0,125,0,0.25)',
     },
     touchDialog3: {

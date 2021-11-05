@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginHorizontal: 0,
         fontSize: 20,
-        fontFamily: 'Manjari-Bold',
+        fontFamily: theme.fonts.bold,
         width: '90%',
         alignSelf: 'center',
     },

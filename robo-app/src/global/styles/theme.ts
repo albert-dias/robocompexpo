@@ -1,3 +1,5 @@
+import { DefaultTheme } from "react-native-paper";
+
 export default {
     colors: {
         background: '#40423A',
@@ -27,10 +29,21 @@ export default {
         textOnSurface: '#FFF',
         white: '#FFFAF7',
         whitepure: '#FFFFFF',
+        green2: '#00aa00',
     }, 
     fonts: {
         thin:       'Manjari-100Thin',
         regular:    'Manjari_400Regular',
         bold:       'Manjari_700Bold',
+    },
+    PaperTheme: {
+        ...DefaultTheme,
+        colors: {
+            ...DefaultTheme.colors,
+            primary: '#000000',
+            text: '#000000',
+            placeholder: '#000000',
+            backdrop: '#000000',
+        }
     }
 };

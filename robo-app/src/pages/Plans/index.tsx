@@ -70,13 +70,16 @@ export function Plans() {
                             <CardContent style={/* (plan_id === plan.id) */(bool) ? styles.cardBox1 : styles.cardBox2}>
                                 <Container vertical horizontal>
                                     <StyledCardTitleTop
-                                        style={{ fontFamily: 'Manjari-Bold', color: theme.colors.green }}>
+                                        style={{
+                                            fontFamily: theme.fonts.bold,
+                                            color: theme.colors.green
+                                        }}>
                                         plan.title
                                     </StyledCardTitleTop>
                                     <Text style={styles.textStyleCard}>plan.description</Text>
                                     <StyledCardTitle
                                         style={{
-                                            fontFamily: 'Manjari-Bold',
+                                            fontFamily: theme.fonts.bold,
                                             color: theme.colors.darkGray,
                                         }}>
                                         {'Por R$ $$ / mês'}
@@ -86,7 +89,7 @@ export function Plans() {
                                         style={{
                                             textAlign: 'center',
                                             fontSize: 18,
-                                            fontFamily: 'Manjari-Bold',
+                                            fontFamily: theme.fonts.bold,
                                             color: theme.colors.contrast,
                                         }}>
                                         Mais detalhes

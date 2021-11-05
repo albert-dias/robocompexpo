@@ -11,12 +11,15 @@ import {
     View
 } from 'react-native';
 import Swiper from 'react-native-swiper';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ParamListBase } from '@react-navigation/routers';
 
 // Import de imagens
 import slide1 from '../assets/images/wizard_01.png';
 import slide2 from '../assets/images/wizard_02.png';
 import slide3 from '../assets/images/wizard_03.png';
 import logo from '../assets/images/Logo-Grupo-Ecomp.png';
+import AuthRoutes from './routes/auth.routes';
 
 // Botão de SKIP da TELA INICAL
 const SkipButton = ({ onPress }) => {
@@ -30,7 +33,7 @@ const SkipButton = ({ onPress }) => {
 };
 
 // Função principal da TELA INICIAL
-export function AppLoading() { //Add {navigation}
+export function Intro({navigation}: StackScreenProps<ParamListBase>) { //Add {navigation}
     StatusBar.setHidden(true);
 
     return (
@@ -46,7 +49,12 @@ export function AppLoading() { //Add {navigation}
                 <View style={styles.image1}>
                     <Image source={slide1} style={styles.slides} />
                     <Text style={styles.title1}>Somos uma plataforma de Gerenciamento de Serviços de TI.</Text>
-                    <SkipButton onPress={() => { console.log('Ir para a página de Selecionar Perfil') }} />
+                    <View style={styles.pularView}>
+                        <TouchableOpacity onPress={() => { navigation.navigate('SelecionarPerfil') }}>
+                            <Text style={styles.pularText}>Pular</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {/* <SkipButton onPress={() => { console.log('Ir para a página de Selecionar Perfil') }} /> */}
                 </View>
             </View>
 

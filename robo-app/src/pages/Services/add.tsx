@@ -89,7 +89,7 @@ export function AddService() {
                                 marginBottom: 7,
                                 marginRight: 10,
                                 fontSize: 20,
-                                fontFamily: 'Manjari-Bold',
+                                fontFamily: theme.fonts.bold,
                                 width: '90%',
                             }}>
                             Adicionar fotos ao serviço:
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         fontSize: 20,
-        fontFamily: 'Manjari-bold',
+        fontFamily: theme.fonts.bold,
         color: 'white',
         textAlign: 'center',
     },

@@ -30,13 +30,13 @@ const styles = StyleSheet.create({
   },
   divwhitebtn: {
     backgroundColor: theme.colors.gray,
-    width: '100%',
+    width: '50%',
     height: 1,
     padding: 10,
   },
   divwhite: {
     backgroundColor: theme.colors.gray,
-    width: '100%',
+    width: '80%',
     height: 1,
     padding: 20,
   },

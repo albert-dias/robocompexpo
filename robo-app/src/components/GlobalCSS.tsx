@@ -64,6 +64,13 @@ export const Input = styled(TextInput) <InputProps>`
     color: ${theme.colors.textOnSurface};
 `;
 
+export const InputPhone = styled(TextInput) <InputProps>`
+    width: ${({ width }) => width ?? '100%'};
+    height: 60px;
+    background-color: rgba(0,0,0,0);
+    color: ${theme.colors.textOnSurface};
+`;
+
 export const IconWrapper = styled(View).attrs((p: StyledIconWrapper) => p)`
     flex-grow: 1;
     height: 100%;

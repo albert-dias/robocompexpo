@@ -10,6 +10,7 @@ import { animated } from 'react-spring';
 
 // Import de páginas
 import Container, { ContainerTop } from "../../components/Container";
+import theme from "../../global/styles/theme";
 
 // Import de imagens
 import imgBanner from '../../../assets/images/banner.png';
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         fontSize: 20,
-        fontFamily: 'Manjari-Bold',
+        fontFamily: theme.fonts.bold,
         color: 'white',
         textAlign: 'center',
     },

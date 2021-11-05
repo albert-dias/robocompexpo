@@ -1,86 +1,117 @@
 // Import de pacotes
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, TouchableNativeFeedback, View } from 'react-native';
-import { animated, useSpring } from 'react-spring';
+import { Image, Text, TouchableNativeFeedback, View } from 'react-native';
+import { useSpring, animated } from 'react-spring';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as easings from 'd3-ease';
 import { useStateLink } from '@hookstate/core';
+import { hideMessage, showMessage } from 'react-native-flash-message';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { showMessage } from 'react-native-flash-message';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 // Import de páginas
 import PanelSlider from '../../components/PanelSlider2';
 import { DIMENSIONS_HEIGHT, DIMENSIONS_WIDTH } from '../../components/Screen';
 import { PanelTitle } from '../../components/GlobalCSS';
+import { Button } from '../../components/Button';
+import { Button2 } from '../../components/Button';
 import theme from '../../global/styles/theme';
-import { Button, Button2 } from '../../components/Button';
+import GlobalContext from '../../context';
 import useWithTouchable from '../../util/useWithTouchable';
 import { InputWarning } from '../../components/InputWarning';
+import request from '../../util/request';
+import useToken from '../../util/useToken';
+import { StateUser } from '../../context/auth';
+import { FCWithAppStackNavigator } from '../AppStackNavigator';
+import GlobalStyle from '../../components/GlobalStyle';
 import { GroupControl, Input, TitleView, TitleWrapper } from '../../components/GlobalCSS';
-import GlobalContext from '../../context';
 
 // Import de imagens
 import logo from '../../../assets/images/logo_branca_robocomp.png';
-import GlobalStyle from '../../components/GlobalStyle';
-import useToken from '../../util/useToken';
 
 const { cpf: cpfValidator, cnpj: cnpjValidator } = require('cpf-cnpj-validator');
 
 const AnimatedTitleWrapper = animated(TitleWrapper);
 const AnimatedTitleView = animated(TitleView);
+const AnimatedPanelSlider = animated(PanelSlider);
+
+const {
+    login: {
+        passwordRef,
+        userTypeRef,
+        cpfRef,
+    },
+} = GlobalContext;
+
+// let passwordRef, userTypeRef, cpfRef;
 
 export function Login() {
-    const {
-        login: {
-            cpfRef,
-            emailRef,
-            passwordRef,
-            userTypeRef,
-        },
-    } = GlobalContext;
-
-    // Variáveis
     const cpf = useWithTouchable(cpfRef);
     const password = useWithTouchable(passwordRef);
-    const token = useToken();
+    // const token = useToken();
 
     const senhaInput = useRef(null);
     const cpfInput = useRef(null);
-
     const [seePassword, setSeePassword] = useState(true);
 
-    const [opacity, setOpacity] = useSpring(() => ({ opacity: 0 }));
-    const [titleWrapper, setTitleWrapper] = useSpring(() => ({ height: DIMENSIONS_HEIGHT }));
-    const [panelLeft, setPanelLeft] = useSpring(() => ({
-        top: DIMENSIONS_HEIGHT,
-        left: 0
-    }));
-
-    const [loading, setLoading] = useState(false);
     let hasError = false;
 
-    // Funções da página
     const checkError = (flag: boolean) => {
-        if (flag) { hasError = true; }
+        if (flag) {
+            hasError = true;
+        }
         return flag;
     };
 
+    const [opacity, setOpacity] = useSpring(() => ({ opacity: 0 }));
+    const [titleWrapper, setTitleWrapper] = useSpring(() => ({
+        height: DIMENSIONS_HEIGHT
+    }));
+    const [panelLeft, setPanelLeft] = useSpring(() => ({
+        top: 0,
+        left: 0,
+    }));
+    const [loading, setLoading] = useState(false);
+
+
+    const submit = async () => {
+        interface SubmitRequest {
+            result?: {
+                token?: string | false;
+                user?: StateUser;
+            };
+        }
+        setLoading(true);
+        try {
+            console.log('LOGIN: ' + cpf.value + '\nSENHA: ' + password.value);
+        } catch (e) {
+            console.log(e);
+        }
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        const config = {
+            duration: 500,
+            easing: easings.easeCubicOut,
+        };
+        setPanelLeft.start({ config, left: 0 });
+    }, []);
+
     const moveTitleToTop = async () => {
         await new Promise((r) => setTimeout(r, 500));
-        setPanelLeft({
+        setPanelLeft.start({
             top: 0,
             config: {
                 duration: 500,
                 easing: easings.easeSinOut,
-            }
+            },
         });
-        setTitleWrapper({
+        setTitleWrapper.start({
             height: 150,
             config: {
                 duration: 500,
-                easing: easings.easeSinIn
+                easing: easings.easeSinOut,
             },
-            onRest: moveTitleToTop,
         });
     };
 
@@ -97,18 +128,13 @@ export function Login() {
 
     useEffect(() => {
         showTitle();
-        const config = {
-            duration: 500,
-            easing: easings.easeCubicOut
-        };
-        setPanelLeft({
-            config, left: 0
-        });
     }, []);
 
-    // Construção da tela
     return (
-        <KeyboardAwareScrollView contentContainerStyle={{ minHeight: '100%' }}>
+        <KeyboardAwareScrollView
+            contentContainerStyle={{
+                minHeight: '100%',
+            }}>
             <GlobalStyle>
                 <AnimatedTitleWrapper style={titleWrapper}>
                     <AnimatedTitleView style={opacity}>
@@ -121,11 +147,9 @@ export function Login() {
                         />
                     </AnimatedTitleView>
                 </AnimatedTitleWrapper>
-                <PanelSlider>
+                <AnimatedPanelSlider style={panelLeft}>
                     <View>
-                        <GroupControl>
-                            <PanelTitle>Acesso</PanelTitle>
-                        </GroupControl>
+                        <PanelTitle>Acesso</PanelTitle>
                         <GroupControl>
                             <Input
                                 ref={cpfInput}
@@ -133,7 +157,7 @@ export function Login() {
                                 label='CPF/CNPJ'
                                 value={cpf.value}
                                 onChangeText={cpf.set}
-                                underlineColor={theme.colors.black}
+                                underlineColor='black'
                                 keyboardType='number-pad'
                                 autoCapitalize='none'
                                 allowFontScaling
@@ -142,13 +166,13 @@ export function Login() {
                                 returnKeyType='next'
                             />
                             <InputWarning
-                                text='CPF/CNPJ não pode ser vazio'
+                                text='CPF/CPNJ não pode ficar vazio'
                                 valid={checkError(cpf.value === '')}
                                 visible={cpf.blurred}
                             />
                             <InputWarning
-                                text='CPF/CNPJ inválido'
-                                valid={checkError(!cpfValidator.isValid(cpf.value) && !cnpjValidator.isValid(cpf.value) && cpf.value !== '')}
+                                text='CPF/CPNJ inválido'
+                                valid={checkError(!cpfValidator.isValid(cpf.value) && !cnpjValidator.isValid(cpf.value))}
                                 visible={cpf.blurred}
                             />
                         </GroupControl>
@@ -156,17 +180,17 @@ export function Login() {
                             <View style={{ flexDirection: 'row', alignItems: 'flex-end', width: '90%' }}>
                                 <Input
                                     ref={senhaInput}
-                                    mode="flat"
-                                    label="Senha"
+                                    mode='flat'
+                                    label='Senha'
                                     value={password.value}
                                     onChangeText={password.set}
-                                    underlineColor="black"
+                                    underlineColor='black'
                                     allowFontScaling
-                                    textContentType="password"
-                                    autoCompleteType="password"
+                                    textContentType='password'
+                                    autoCompleteType='password'
                                     secureTextEntry={seePassword}
                                     onBlur={password.onBlur}
-                                    onSubmitEditing={() => { }}
+                                    onSubmitEditing={submit}
                                 />
                                 <TouchableNativeFeedback
                                     onPressIn={() => setSeePassword(false)}
@@ -180,14 +204,14 @@ export function Login() {
                                 </TouchableNativeFeedback>
                             </View>
                             <InputWarning
-                                text="Senha não pode ser vazia"
+                                text='Senha não pode ser vazia'
                                 valid={checkError(password.value === '')}
                                 visible={password.blurred}
                             />
                         </GroupControl>
                         <GroupControl>
                             <Button
-                                onPress={() => { }}
+                                onPress={submit}
                                 text='ENTRAR'
                                 fullWidth
                                 disabled={hasError || loading}
@@ -195,25 +219,27 @@ export function Login() {
                                 backgroundColor={theme.colors.newcolor}
                             />
                         </GroupControl>
-                        <View style={{
-                            flexDirection: 'row',
-                            alignSelf: 'center',
-                            justifyContent: 'space-between',
-                            width: '90%'
-                        }}>
-                            <Button2
-                                onPress={() => { }}
-                                text='RECUPERAR SENHA'
-                                backgroundColor={theme.colors.middlecolor}
-                            />
-                            <Button2
-                                onPress={() => { }}
-                                text='CRIAR CONTA'
-                                backgroundColor={theme.colors.middlecolor}
-                            />
-                        </View>
+                        <GroupControl>
+                            <View style={{
+                                flexDirection: 'row',
+                                alignSelf: 'center',
+                                justifyContent: 'space-between',
+                                width: '90%'
+                            }}>
+                                <Button2
+                                    onPress={() => { console.log('navigate(Recover)') }}
+                                    text='RECUPERAR SENHA'
+                                    backgroundColor={theme.colors.middlecolor}
+                                />
+                                <Button2
+                                    onPress={() => { console.log('navigate(SelecionarPerfil)') }}
+                                    text='CRIAR CONTA'
+                                    backgroundColor={theme.colors.middlecolor}
+                                />
+                            </View>
+                        </GroupControl>
                     </View>
-                </PanelSlider>
+                </AnimatedPanelSlider>
             </GlobalStyle>
         </KeyboardAwareScrollView>
     );

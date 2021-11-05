@@ -18,6 +18,7 @@ import { InputWarning } from '../../components/InputWarning';
 import useWithTouchable from '../../util/useWithTouchable';
 import theme from '../../global/styles/theme';
 import { Button } from '../../components/Button';
+import { FCWithAppStackNavigator } from '../AppStackNavigator';
 import request from '../../util/request';
 import Request from '../../interfaces/Request';
 import GlobalStyle from '../../components/GlobalStyle';
@@ -25,38 +26,59 @@ import Select from '../../components/Select';
 import useToken from '../../util/useToken';
 import { StateUser } from '../../context/auth';
 import AddressForm from '../../components/AddressForm';
-const { cnpj: cnpjValidator } = require('cpf-cnpj-validator');
 
 // Import de imagens
 import logo from '../../../assets/images/logo_branca_robocomp.png';
 
-// const {
-//     cadastro: {
-//         nameRef,
-//         cnpjRef,
-//         apelidoRef,
-//     },
-//     category: { categoriesRef }
-// } = GlobalContext;
-let nameRef, cnpjRef, apelidoRef,
+const { cnpj: cnpjValidator } = require('cpf-cnpj-validator');
+
+const styles = StyleSheet.create({
+    textStyleF: {
+        fontSize: 16,
+        paddingLeft: 20,
+        paddingRight: 20,
+        color: 'white',
+        textAlign: 'center',
+        padding: 3,
+        alignSelf: 'center',
+    },
+});
+
+let //Cadastro
+    //Passo 1
+    cnpjRef, nameRef, apelidoRef,
+    //Passo 2
     addressRef, numberRef, complementRef, districtRef, cityRef,
     stateRef, cepRef, latitudeRef, longitudeRef,
+    //Passo 3
     emailRef, passwordRef, confirmPasswordRef, phoneRef,
-    categoryIdsRef, categoriesRef;
+    //Passo 4
+    clearForm, categoryIdsRef,
+
+    // Category
+    categoriesRef, fetchCategories;
 
 export function EmpresaRegister() {
-    // Variáveis
-    let hasErrors = false;
 
+    // const navegar = useNavigation();
+    const [loading, setLoading] = useState(false);
+
+    //Vairáveis para passar de um campo para outro
     //Passo1
     const nameInputRef = useRef(null);
     const cnpjInputRef = useRef(null);
     const telefoneRef = useRef(null);
+    //Passo 3
+    const emailInputRef = useRef(null);
+    const passwordInputRef = useRef(null);
+    const confirmPasswordInputRef = useRef(null);
+    const [seePassword, setSeePassword] = useState(true);
+    const [seeConfirmPassword, setSeeConfirmPassword] = useState(true);
+
+    //Vairáveis do passo 1
     const name = useWithTouchable(nameRef);
     const cnpj = useWithTouchable(cnpjRef);
     const apelido = useWithTouchable(apelidoRef);
-
-    const [v, setV] = useState(false);
 
     //Vairáveis do passo 2
     const address = useWithTouchable(addressRef);
@@ -72,36 +94,23 @@ export function EmpresaRegister() {
     //Variáveis do passo 3
     const email = useWithTouchable(emailRef);
     const password = useWithTouchable(passwordRef);
+    const [pass, setPass] = useState(0);
     const confirmPassword = useWithTouchable(confirmPasswordRef);
     const phone = useWithTouchable(phoneRef);
-    const emailInputRef = useRef(null);
-    const passwordInputRef = useRef(null);
-    const confirmPasswordInputRef = useRef(null);
-    const [seePassword, setSeePassword] = useState(true);
-    const [seeConfirmPassword, setSeeConfirmPassword] = useState(true);
 
     //Variáveis do passo 4
     const categoryIds = useStateLink(categoryIdsRef);
     const categories = useStateLink(categoriesRef);
 
-    // Funções
+    const [v, setV] = useState(false);
+
+    let hasErrors = false;
+
     const checkError = (flag: boolean) => {
         if (flag) { hasErrors = true; }
         return flag;
     };
 
-    const setCategories = async () => {
-        const response = await request.get('categories/getAll');
-        // categories.set(response.result.categorias);
-        console.log('CATEGORIAS: ' + JSON.stringify(response));
-    };
-
-    useEffect(() => {
-        setCategories();
-    }, []);
-
-
-    // Construção da página
     return (
         <GlobalStyle>
             <KeyboardAwareScrollView
@@ -112,7 +121,8 @@ export function EmpresaRegister() {
                     minHeight: '90%',
                     marginTop: '5%',
                     paddingBottom: '5%',
-                }}>
+                }}
+            >
                 <ContainerTop style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
                     <Container
                         pb
@@ -160,7 +170,10 @@ export function EmpresaRegister() {
                     </Container>
                 </ContainerTop>
                 <View>
-                    <PanelSlider style={{ marginTop: 20 }}>
+                    <PanelSlider
+                        style={{
+                            marginTop: 20,
+                        }}>
                         {/* Passo 1 */}
                         {/* GroupControl Nome Fantasia */}
                         <GroupControl>
@@ -307,7 +320,7 @@ export function EmpresaRegister() {
                                     value={password.value}
                                     placeholder='Mínimo de 6 dígitos'
                                     secureTextEntry={seePassword}
-                                    onChangeText={text => password.set(text)}
+                                    onChangeText={text => { password.set(text); setPass(text.length); }}
                                     underlineColor={theme.colors.black}
                                     allowFontScaling
                                     onBlur={password.onBlur}
@@ -332,7 +345,7 @@ export function EmpresaRegister() {
                             />
                             <InputWarning
                                 text="Senha muito pequena"
-                                valid={checkError(password.length < 6 && password.value !== '')}
+                                valid={checkError(pass < 6 && password.value !== '')}
                                 visible={password.blurred}
                             />
                         </GroupControl>
@@ -357,7 +370,7 @@ export function EmpresaRegister() {
                                     onPressOut={() => setSeeConfirmPassword(true)}
                                 >
                                     <FontAwesome5
-                                        name={(seePassword) ? 'eye-slash' : 'eye'}
+                                        name={(seeConfirmPassword) ? 'eye-slash' : 'eye'}
                                         color={theme.colors.contrast}
                                         size={30}
                                     />
@@ -374,7 +387,6 @@ export function EmpresaRegister() {
                                 visible={password.blurred}
                             />
                         </GroupControl>
-
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                             <View style={{ flex: 1, height: 1, backgroundColor: '#A2A2A2' }} />
                             <View>
@@ -382,7 +394,6 @@ export function EmpresaRegister() {
                             </View>
                             <View style={{ flex: 1, height: 1, backgroundColor: '#A2A2A2' }} />
                         </View>
-
                         {/* Passo 4 */}
                         {/* GroupControl Selecionar Serviços */}
                         <GroupControl>
@@ -393,24 +404,23 @@ export function EmpresaRegister() {
                                 Selecione os serviços que você executa:
                             </Text>
                         </GroupControl>
-                        {/* {typeof categories.value !== 'undefined' && ( */}
-
-                        {/*  <Select
-                            options={categories.value.slice(0)}
-                            selected={categoryIds.value}
-                            onPress={itemId => {
-                                if (categoryIds.value.includes(itemId)) {
-                                    categoryIds.set(
-                                        categoryIds.value.filter(
-                                            currentValue => itemId !== currentValue,
-                                        ),
-                                    );
-                                }
-                                else { categoryIds.set(categoryIds.value.concat([itemId])); }
-                            }}
-                        /> 
-                        )}*/}
-
+                        {/* <Text>{JSON.stringify(categories.value)}</Text> */}
+                        {/*typeof categories.value !== 'undefined' && (
+                            <Select
+                                options={categories.value.slice(0)}
+                                selected={categoryIds.value}
+                                onPress={itemId => {
+                                    if (categoryIds.value.includes(itemId)) {
+                                        categoryIds.set(
+                                            categoryIds.value.filter(
+                                                currentValue => itemId !== currentValue,
+                                            ),
+                                        );
+                                    }
+                                    else { categoryIds.set(categoryIds.value.concat([itemId])); }
+                                }}
+                            />
+                            )*/}
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                             <View style={{ flex: 1, height: 1, backgroundColor: '#A2A2A2' }} />
                             <View>
@@ -418,10 +428,8 @@ export function EmpresaRegister() {
                             </View>
                             <View style={{ flex: 1, height: 1, backgroundColor: '#A2A2A2' }} />
                         </View>
-
                         {/* Passo 2 */}
                         {/* GroupControl Endereço */}
-
                         {/* <GroupControl>
                             <AddressForm
                                 address={address.value}
@@ -443,21 +451,19 @@ export function EmpresaRegister() {
                             />
                         </GroupControl> */}
 
+                        <GroupControl>
+                            <Button
+                                onPress={console.log('submit')}
+                                // disabled={hasErrors}
+                                text="ENVIAR"
+                                fullWidth
+                                loading={loading}
+                                backgroundColor={theme.colors.middleColor}
+                            />
+                        </GroupControl>
                     </PanelSlider>
                 </View>
             </KeyboardAwareScrollView>
         </GlobalStyle>
     );
 }
-
-const styles = StyleSheet.create({
-    textStyleF: {
-        fontSize: 16,
-        paddingLeft: 20,
-        paddingRight: 20,
-        color: 'white',
-        textAlign: 'center',
-        padding: 3,
-        alignSelf: 'center',
-    },
-});
