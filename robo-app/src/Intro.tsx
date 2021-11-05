@@ -11,6 +11,7 @@ import {
     View
 } from 'react-native';
 import Swiper from 'react-native-swiper';
+import { useNavigation } from '@react-navigation/core';
 import { StackScreenProps } from '@react-navigation/stack';
 import { ParamListBase } from '@react-navigation/routers';
 
@@ -19,6 +20,7 @@ import slide1 from '../assets/images/wizard_01.png';
 import slide2 from '../assets/images/wizard_02.png';
 import slide3 from '../assets/images/wizard_03.png';
 import logo from '../assets/images/Logo-Grupo-Ecomp.png';
+import { Login } from './pages/Login';
 import AuthRoutes from './routes/auth.routes';
 
 // Botão de SKIP da TELA INICAL
@@ -49,11 +51,7 @@ export function Intro({navigation}: StackScreenProps<ParamListBase>) { //Add {na
                 <View style={styles.image1}>
                     <Image source={slide1} style={styles.slides} />
                     <Text style={styles.title1}>Somos uma plataforma de Gerenciamento de Serviços de TI.</Text>
-                    <View style={styles.pularView}>
-                        <TouchableOpacity onPress={() => { navigation.navigate('SelecionarPerfil') }}>
-                            <Text style={styles.pularText}>Pular</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <SkipButton onPress={() => { navigation.navigate('SelecionarPerfil') }} />
                     {/* <SkipButton onPress={() => { console.log('Ir para a página de Selecionar Perfil') }} /> */}
                 </View>
             </View>
@@ -65,7 +63,7 @@ export function Intro({navigation}: StackScreenProps<ParamListBase>) { //Add {na
                 <View style={styles.image1}>
                     <Image source={slide2} style={styles.slides} />
                     <Text style={styles.title1}>Abra chamados e encontre a melhor empresa de TI para resolver seu problema.</Text>
-                    <SkipButton onPress={() => { console.log('Ir para a página de Selecionar Perfil') }} />
+                    <SkipButton onPress={() => { navigation.navigate('SelecionarPerfil') }} />
                 </View>
             </View>
             {/* SLIDE 3 */}
@@ -83,7 +81,7 @@ export function Intro({navigation}: StackScreenProps<ParamListBase>) { //Add {na
                 <View style={styles.prontoContainer}>
                     <TouchableHighlight
                         style={styles.pronto}
-                        onPress={() => { console.log('Ir para a página de Selecionar Perfil') }}>
+                        onPress={() => { navigation.navigate('SelecionarPerfil') }}>
                         <Text style={styles.font}>Pronto</Text>
                     </TouchableHighlight>
                 </View>

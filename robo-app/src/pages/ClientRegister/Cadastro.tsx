@@ -8,6 +8,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import emailValidator from 'email-validator';
 import { Picker } from '@react-native-picker/picker';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ParamListBase } from '@react-navigation/routers';
 
 // Import de páginas
 import { GroupControl, Input } from '../../components/GlobalCSS';
@@ -88,7 +90,7 @@ const {
     // Passo 4
     // emailRef, passwordRef, confirmPasswordRef;
 
-export function ClientRegister() {
+export function ClientRegister({ navigation }: StackScreenProps<ParamListBase>) {
     const [loading, setLoading] = useState(false);
 
     //Vairáveis para passar de um campo para outro

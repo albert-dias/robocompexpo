@@ -8,6 +8,8 @@ import { useStateLink } from '@hookstate/core';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import emailValidator from 'email-validator';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ParamListBase } from '@react-navigation/routers';
 
 // Import de páginas
 import { GroupControl, Input } from '../../components/GlobalCSS';
@@ -58,7 +60,7 @@ let //Cadastro
     // Category
     categoriesRef, fetchCategories;
 
-export function EmpresaRegister() {
+export function EmpresaRegister({ navigation }: StackScreenProps<ParamListBase>) {
 
     // const navegar = useNavigation();
     const [loading, setLoading] = useState(false);
@@ -135,7 +137,7 @@ export function EmpresaRegister() {
                         }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
                             <TouchableOpacity
-                                onPress={() => console.log('voltar()')}
+                                onPress={() => navigation.goBack()}
                                 style={{
                                     position: 'relative',
                                     alignSelf: 'flex-start',

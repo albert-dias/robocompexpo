@@ -1,3 +1,4 @@
+// Import de pacotes
 import React, { useState, useEffect } from 'react';
 import { Animated, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -6,9 +7,10 @@ import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { ParamListBase } from '@react-navigation/routers';
 
-import AuthRoutes from '../routes/auth.routes';
+// Import de páginas
 import theme from '../global/styles/theme';
 
+// Import de imagens
 import logo from '../../assets/images/Logo-Grupo-Ecomp.png';
 
 const styles = StyleSheet.create({
@@ -100,13 +102,13 @@ export function SelecionarPerfil({ navigation }: StackScreenProps<ParamListBase>
                     <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={() => { navigation.navigate('EmpresaRegister') }}
-                        >
+                    >
                         <LinearGradient
                             colors={['#03a4a9', '#282d41']}
                             start={{ x: 0.0, y: 1.0 }}
                             end={{ x: 1.0, y: 1.0 }}
                             style={styles.submit}
-                            >
+                        >
                             <View style={styles.botaoPerfil}>
                                 <FontAwesome5 name='laptop' size={25} color={theme.colors.whitepure} />
                                 <Text style={styles.submitText}>Empresa de TI</Text>
@@ -117,8 +119,8 @@ export function SelecionarPerfil({ navigation }: StackScreenProps<ParamListBase>
 
                 <View style={styles.botao}>
                     <TouchableOpacity
-                            activeOpacity={0.7}
-                            onPress={() => { navigation.navigate('ClientRegister') }}
+                        activeOpacity={0.7}
+                        onPress={() => { navigation.navigate('ClientRegister') }}
                     >
                         <LinearGradient
                             colors={['#03a4a9', '#282d41']}
@@ -135,10 +137,11 @@ export function SelecionarPerfil({ navigation }: StackScreenProps<ParamListBase>
                 </View>
                 <View style={styles.loginButton}>
                     <TouchableOpacity
-                        style={{flexDirection:'row', alignItems:'center'}}
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                        onPress={() => { navigation.navigate('Login') }}
                     >
                         <FontAwesome5
-                            style={{marginRight: 10}}
+                            style={{ marginRight: 10 }}
                             name={'sign-in-alt'}
                             size={20}
                             color={theme.colors.black}
