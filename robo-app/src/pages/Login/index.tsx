@@ -27,6 +27,8 @@ import { GroupControl, Input, TitleView, TitleWrapper } from '../../components/G
 
 // Import de imagens
 import logo from '../../../assets/images/logo_branca_robocomp.png';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ParamListBase } from '@react-navigation/routers';
 
 const { cpf: cpfValidator, cnpj: cnpjValidator } = require('cpf-cnpj-validator');
 
@@ -44,7 +46,7 @@ const {
 
 // let passwordRef, userTypeRef, cpfRef;
 
-export function Login() {
+export function Login({ navigation }: StackScreenProps<ParamListBase>) {
     const cpf = useWithTouchable(cpfRef);
     const password = useWithTouchable(passwordRef);
     // const token = useToken();
@@ -232,7 +234,7 @@ export function Login() {
                                     backgroundColor={theme.colors.middlecolor}
                                 />
                                 <Button2
-                                    onPress={() => { console.log('navigate(SelecionarPerfil)') }}
+                                    onPress={() => navigation.navigate('SelecionarPerfil') }
                                     text='CRIAR CONTA'
                                     backgroundColor={theme.colors.middlecolor}
                                 />

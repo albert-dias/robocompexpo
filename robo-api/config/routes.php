@@ -68,24 +68,17 @@ Router::scope('/', function (RouteBuilder $routes) {
      * ...and connect the rest of 'Pages' controller's URLs.
      */
     $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
-    
+
     $routes->connect('/user/login', ['controller' => 'User', 'action' => 'login', 'allowWithoutToken' => true]);
-    $routes->connect('/leads/site', ['controller' => 'Leads', 'action' => 'site', 'allowWithoutToken' => true]);
-    $routes->connect('/leads/portal-site', ['controller' => 'Leads', 'action' => 'portalSite', 'allowWithoutToken' => true]);
-    $routes->connect('/leads/app/*', ['controller' => 'Leads', 'action' => 'app', 'allowWithoutToken' => true]);
-    $routes->connect('/people/insertProvider', ['controller' => 'People', 'action' => 'insertProvider', 'allowWithoutToken' => true]);
+    $routes->connect('/users/loginClient', ['controller' => 'Users', 'action' => 'loginClient', 'allowWithoutToken' => true]);
+    $routes->connect('/users/loginProvider', ['controller' => 'Users', 'action' => 'loginProvider', 'allowWithoutToken' => true]);
+    $routes->connect('/users/getNewPasswordClient', ['controller' => 'Users', 'action' => 'getNewPasswordClient', 'allowWithoutToken' => true]);
+    $routes->connect('/users/getNewPasswordProvider', ['controller' => 'Users', 'action' => 'getNewPasswordProvider', 'allowWithoutToken' => true]);
+
     $routes->connect('/clients/insert/*', ['controller' => 'Clients', 'action' => 'insert', 'allowWithoutToken' => true]);
     $routes->connect('/categories/getAll', ['controller' => 'Categories', 'action' => 'getAll', 'allowWithoutToken' => true]);
     $routes->connect('/subcategories/getAll', ['controller' => 'Subcategories', 'action' => 'getAll', 'allowWithoutToken' => true]);
-    $routes->connect('/users/loginProvider', ['controller' => 'Users', 'action' => 'loginProvider', 'allowWithoutToken' => true]);
-    $routes->connect('/users/loginClient', ['controller' => 'Users', 'action' => 'loginClient', 'allowWithoutToken' => true]);
-    $routes->connect('/users/getNewPasswordClient', ['controller' => 'Users', 'action' => 'getNewPasswordClient', 'allowWithoutToken' => true]);
-    $routes->connect('/users/getNewPasswordProvider', ['controller' => 'Users', 'action' => 'getNewPasswordProvider', 'allowWithoutToken' => true]);
-    $routes->connect('/subcategories/getCategoriesId', ['controller' => 'Subcategories', 'action' => 'getCategoriesId', 'allowWithoutToken' => true]);
-    $routes->connect('/unregistered_users/insert/*', ['controller' => 'UnregisteredUsers', 'action' => 'insert', 'allowWithoutToken' => true]);
-    $routes->connect('/unregistered_users/update/*', ['controller' => 'UnregisteredUsers', 'action' => 'update', 'allowWithoutToken' => true]);
-    $routes->connect('/unregistered_users/delete/*', ['controller' => 'UnregisteredUsers', 'action' => 'delete', 'allowWithoutToken' => true]);
-    $routes->connect('/leads/checkCPF', ['controller' => 'Leads', 'action' => 'checkCPF', 'allowWithoutToken' => true]);
+    $routes->connect('subcategories/getCategoriesId', ['controller' => 'Subcategories', 'action' => 'getCategoriesId', 'allowWithoutToken' => true]);
 
     /**
      * Connect catchall routes for all controllers.

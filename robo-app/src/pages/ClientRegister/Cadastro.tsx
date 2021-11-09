@@ -163,7 +163,7 @@ export function ClientRegister({ navigation }: StackScreenProps<ParamListBase>) 
                         }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
                             <TouchableOpacity
-                                onPress={() => console.log('voltar()')}
+                                onPress={() => navigation.goBack()}
                                 style={{
                                     position: 'relative',
                                     alignSelf: 'flex-start',

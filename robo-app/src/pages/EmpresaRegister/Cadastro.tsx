@@ -31,6 +31,7 @@ import AddressForm from '../../components/AddressForm';
 
 // Import de imagens
 import logo from '../../../assets/images/logo_branca_robocomp.png';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const { cnpj: cnpjValidator } = require('cpf-cnpj-validator');
 
@@ -112,6 +113,10 @@ export function EmpresaRegister({ navigation }: StackScreenProps<ParamListBase>)
         if (flag) { hasErrors = true; }
         return flag;
     };
+
+    const setCategorias = async () => {
+        console.log('setar categorias');
+    }
 
     return (
         <GlobalStyle>
@@ -432,8 +437,29 @@ export function EmpresaRegister({ navigation }: StackScreenProps<ParamListBase>)
                         </View>
                         {/* Passo 2 */}
                         {/* GroupControl Endereço */}
-                        {/* <GroupControl>
-                            <AddressForm
+                        <GroupControl>
+                            {/* <GooglePlacesAutocomplete
+                                placeholder='Procurar Endereço'
+                                query={{
+                                    key: 'AIzaSyB0ijoL_gfvaD5WC1Qr27Ppf_ScpP_P62Y',
+                                    language: 'pt-BR',
+                                }}
+                                onPress={(data, details = null) => console.log(data, details)}
+                            /> */}
+                            <GooglePlacesAutocomplete
+                                placeholder='Procurar Endereço'
+                                query={{
+                                    key: 'AIzaSyB0ijoL_gfvaD5WC1Qr27Ppf_ScpP_P62Y',
+                                    language: 'pt-BR',
+                                }}
+                                onPress={(data, details) => console.log(data, details)}
+                                textInputProps={{
+                                    InputComp: Input,
+                                    leftIcon: { type: 'font-awesome', name: 'chevron-left' },
+                                    errorStyle: { color: 'red' },
+                                }}
+                            />
+                            {/* <AddressForm
                                 address={address.value}
                                 number={number.value}
                                 complement={complement.value}
@@ -450,17 +476,18 @@ export function EmpresaRegister({ navigation }: StackScreenProps<ParamListBase>)
                                 setCep={cep.set}
                                 setLatitude={latitude.set}
                                 setLongitude={longitude.set}
-                            />
-                        </GroupControl> */}
+                            /> */}
+                        </GroupControl>
 
                         <GroupControl>
                             <Button
-                                onPress={console.log('submit')}
+                                // onPress={console.log('submit')}
+                                onPress={() => setCategorias()}
                                 // disabled={hasErrors}
                                 text="ENVIAR"
                                 fullWidth
                                 loading={loading}
-                                backgroundColor={theme.colors.middleColor}
+                                backgroundColor={theme.colors.middlecolor}
                             />
                         </GroupControl>
                     </PanelSlider>

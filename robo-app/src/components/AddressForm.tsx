@@ -70,63 +70,66 @@ const AddressForm = props => {
         RNGooglePlaces.openAutocompleteModal({
             country: 'BR',
             useOverlay: true,
-        }, ['addressComponents', 'location']).then(place => {
-            clear();
-            var addressComponents = place.addressComponents;
-            addressComponents.forEach(addressComponent => {
-                switch (addressComponent.types[0]) {
-                    case 'postal_code':
-                        setCep(addressComponent.shortName);
-                        setCepIsEmpty(false);
-                        break;
-                    case 'street_number':
-                        setNumber(addressComponent.shortName);
-                        setNumberIsEmpty(false);
-                        break;
-                    case 'route':
-                        setAddress(addressComponent.shortName);
-                        setAddressIsEmpty(false);
-                        break;
-                    case 'sublocality_level_1':
-                        setNeighborhood(addressComponent.shortName);
-                        setNeighborhoodIsEmpty(false);
-                        break;
-                    case 'administrative_area_level_2':
-                        setCity(addressComponent.shortName);
-                        setCityIsEmpty(false);
-                        break;
-                    case 'administrative_area_level_1':
-                        setState(addressComponent.shortName);
-                        setStateIsEmpty(false);
-                        break;
-                    default: break;
-                }
+        },
+            ['addressComponents', 'location'])
+            .then(place => {
+                clear();
+                var addressComponents = place.addressComponents;
+                addressComponents.forEach(addressComponent => {
+                    switch (addressComponent.types[0]) {
+                        case 'postal_code':
+                            setCep(addressComponent.shortName);
+                            setCepIsEmpty(false);
+                            break;
+                        case 'street_number':
+                            setNumber(addressComponent.shortName);
+                            setNumberIsEmpty(false);
+                            break;
+                        case 'route':
+                            setAddress(addressComponent.shortName);
+                            setAddressIsEmpty(false);
+                            break;
+                        case 'sublocality_level_1':
+                            setNeighborhood(addressComponent.shortName);
+                            setNeighborhoodIsEmpty(false);
+                            break;
+                        case 'administrative_area_level_2':
+                            setCity(addressComponent.shortName);
+                            setCityIsEmpty(false);
+                            break;
+                        case 'administrative_area_level_1':
+                            setState(addressComponent.shortName);
+                            setStateIsEmpty(false);
+                            break;
+                        default: break;
+                    }
+                });
+
+                var location = place.location;
+                setLongitude(location.longitude);
+                setLatitude(location.latitude);
+
+                setCepBlurred(true);
+                setAddressBlurred(true);
+                setNumberBlurred(true);
+                setNeighborhoodBlurred(true);
+                setCityBlurred(true);
+                setStateBlurred(true);
+
+                setSearchDone(true);
+
+                setLoading(false);
+            }).catch(error => {
+                console.log('ERROR: ' + error.message);
+                setLoading(false);
             });
-
-            var location = place.location;
-            setLongitude(location.longitude);
-            setLatitude(location.latitude);
-
-            setCepBlurred(true);
-            setAddressBlurred(true);
-            setNumberBlurred(true);
-            setNeighborhoodBlurred(true);
-            setCityBlurred(true);
-            setStateBlurred(true);
-
-            setSearchDone(true);
-
-            setLoading(false);
-        }).catch(error => {
-            console.log('ERROR: ' + error.message);
-            setLoading(false);
-        });
     };
 
     const getCurrentAddress = async () => {
-        try{
+        try {
             const response = await RNGooglePlaces.getCurrentPlace();
-        } catch(e){
+            notify(JSON.stringify(response), 'success');
+        } catch (e) {
             notify(e, 'error');
         }
     };

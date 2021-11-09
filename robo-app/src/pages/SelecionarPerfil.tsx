@@ -83,6 +83,7 @@ export function SelecionarPerfil({ navigation }: StackScreenProps<ParamListBase>
             toValue: 0,
             speed: 4,
             bounciness: 15,
+            useNativeDriver: true,
         }).start();
     }, []);
 
