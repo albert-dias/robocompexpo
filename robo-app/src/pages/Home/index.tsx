@@ -4,13 +4,17 @@ import { Image, ImageBackground, SafeAreaView, StyleSheet, TouchableWithoutFeedb
 import { Text } from "react-native-paper";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { FontAwesome5 } from '@expo/vector-icons';
-import { LinearGradient } from "expo-linear-gradient";
-import styled from "styled-components/native";
-import { animated } from 'react-spring';
+import { LinearGradient } from 'expo-linear-gradient';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { StackScreenProps } from "@react-navigation/stack";
+// import styled from "styled-components/native";
+// import { animated } from 'react-spring';
 
 // Import de páginas
 import Container, { ContainerTop } from "../../components/Container";
 import theme from "../../global/styles/theme";
+import { useAuth } from '../../hooks/auth';
 
 // Import de imagens
 import imgBanner from '../../../assets/images/banner.png';
@@ -20,7 +24,21 @@ import logoBranca from '../../../assets/images/logo_branca_robocomp.png';
 //-----Início do código-----
 //--------------------------
 
-export function Home() {
+export function Home({navigation} : StackScreenProps<ParamListBase>) {
+
+    const { signOut } = useAuth();
+
+    function HomeScreen({ navigation }) {
+        return (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <TouchableOpacity onPress={()=>console.log('Logoff')}>
+                    <Text>Logoff</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    const Drawer = createDrawerNavigator();
     return (
         <View style={{ flexGrow: 1 }}>
             <ScrollView style={styles.scrollView}>
@@ -60,13 +78,26 @@ export function Home() {
                 </ContainerTop>
                 {/* Até o  fechar o ScrollView é a parte do meio da página*/}
                 <View style={styles.viewn}>
+                    <TouchableOpacity style={{
+                        alignContent: 'center',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                        marginBottom: '2%'
+                    }}
+                        onPress={async () => { signOut() }}>
+                        <FontAwesome5
+                            name='power-off'
+                            color={theme.colors.black}
+                            size={40}
+                        />
+                    </TouchableOpacity>
                     <View style={styles.duplocontainer}>
                         <View style={styles.itemsContainer}>
                             <View style={styles.itemsRow}>
                                 {/* Botão de SOLICITAR SERVIÇOS */}
                                 <TouchableOpacity
                                     activeOpacity={0.7}
-                                    onPress={() => { console.log('Solicitar Serviços') }} //Mudar para a página depois
+                                    onPress={() => { navigation.navigate('RequestServices') }} //Mudar para a página depois
                                 >
                                     <LinearGradient
                                         colors={['#282D41', '#03A4A9']}

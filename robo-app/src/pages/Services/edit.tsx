@@ -6,7 +6,6 @@ import {
     TouchableOpacity, View
 } from 'react-native';
 import { IconButton, Text, TouchableRipple } from 'react-native-paper';
-import { useStateLinkUnmounted } from '@hookstate/core';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 

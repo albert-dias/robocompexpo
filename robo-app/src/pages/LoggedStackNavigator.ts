@@ -3,7 +3,7 @@ import {
     StackNavigationProp
 } from "@react-navigation/stack";
 import { CompositeNavigationProp } from "@react-navigation/native";
-import { RootLoggedStackParamList } from './AppStackNavigator';
+import { RootAppStackParamList } from './AppStackNavigator';
 
 type RootLoggedStackParamListUndefinedRoutes =
     | 'AdmHome'
@@ -30,7 +30,7 @@ export type FCWithLoggedStackNavigator<
     > = React.FC<{
         navigation: CompositeNavigationProp<
             StackNavigationProp<RootLoggedStackParamList, T>,
-            StackNavigationProp<RootLoggedStackParamList>
+            StackNavigationProp<RootAppStackParamList>
         >;
     }>;
 

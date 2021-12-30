@@ -1,12 +1,12 @@
 // Import de pacotes
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Image, ImageBackground, Modal, ScrollView, StyleSheet, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { IconButton, RadioButton, Text, Title, TouchableRipple } from 'react-native-paper';
-import { useStateLinkUnmounted } from '@hookstate/core';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import { StackScreenProps } from '@react-navigation/stack';
 
 // Import de páginas
 import TextInput from '../../components/Input';
@@ -14,20 +14,67 @@ import Container, { ContainerTop } from '../../components/Container';
 import request from '../../util/request';
 import theme from '../../global/styles/theme';
 import { Button } from '../../components/Button';
-import { StateUser } from '../../context/auth';
-import GlobalContext from '../../context';
 import { ButtonClose, ButtonSelect, ContentModal, ViewModal } from '../../components/GlobalCSS';
+import api from '../../services/api';
 
 // Import de imagens
 import imgBanner from '../../../assets/images/banner.png';
 import logo from '../../../assets/images/logo_branca_robocomp.png';
 
-export function AddService() {
+export function AddServices({ navigation }: StackScreenProps<ParamListBase>) {
     // Variáveis
+
+    // RadioButtons selecionados
+    const [category, setCategory] = useState();
+    const [subCategoriasSelect, setSubCategoriasSelect] = useState();
+
     const [comentario, setComentario] = useState('');
     const [loading, setLoading] = useState(false);
-    const [categorias, setCategorias] = useState('');
-    const [subCategoria, setSubCategoria] = useState('');
+
+    const [categorias, setCategorias] = useState([]);
+    const [subCategorias, setSubCategorias] = useState([]);
+    const [price, setPrice] = useState('');
+
+    const selectCategory = useCallback((id) => {
+
+        setCategory(id);
+        const filterCategories = subCategorias.filter((sub) => {
+            return sub.category_id === Number(id);
+        });
+
+        console.log(filterCategories);
+    }, [subCategorias]);
+
+    const setAllCategories = async () => {
+        try {
+            const response = await api.get('category');
+            setCategorias(response.data);
+
+            const response2 = await api.get('subcategory');
+            setSubCategorias(response2.data);
+
+        } catch (e) { console.log(e.response.data.message); }
+    }
+
+    useEffect(() => {
+        setAllCategories();
+    }, []);
+
+    const submit = async () => {
+        try {
+            const response = await api.post('user/subcategory', {
+                subcategory_id: subCategoriasSelect,
+                price: price.replace('R$', '').replace(',', '.')
+            });
+
+            setCategory(0); setSubCategoriasSelect(0); setPrice(0);
+            console.log('PRODUTO: %s', response.data);
+            Alert.alert('AVISO', 'Serviço cadastrado com sucesso', [{
+                text: 'OK',
+                onPress: () => { },
+            }], { cancelable: true });
+        } catch (e) { console.log('ERROR: ' + e.response.data.message); }
+    }
 
     // Construção da página
     return (
@@ -60,7 +107,7 @@ export function AddService() {
                                 marginBottom: -55,
                             }} />
                         <TouchableOpacity
-                            onPress={() => console.log('goBack()')}
+                            onPress={() => navigation.goBack()}
                             style={{
                                 position: 'absolute',
                                 alignSelf: 'flex-start',
@@ -83,7 +130,7 @@ export function AddService() {
             <ScrollView style={styles.scrollView}>
                 <Container pb />
                 <Container horizontal pt>
-                    <View>
+                    {/* <View>
                         <Text
                             style={{
                                 marginBottom: 7,
@@ -94,7 +141,7 @@ export function AddService() {
                             }}>
                             Adicionar fotos ao serviço:
                         </Text>
-                    </View>
+                    </View> */}
                     {/* <Photos
                     photos={transformToPhotoArray(photos)}
                     addPhoto={uri => setPhotos([...photos, uri])}
@@ -108,74 +155,68 @@ export function AddService() {
                 {/* Categorias cadastradas do usuário */}
                 <Container>
                     <Container style={styles.radioGroup}>
-                        <RadioButton.Group
-                            onValueChange={newValue => {
-                                console.log('NEWVALUE: ' + JSON.stringify(newValue));
-                                //Mostrar a categoria selecionada
-                                setCategorias(newValue);
-                            }}
-                            value={'categorias'}
-                        >
-                            {/* {(arrayCategory !== undefined) ? arrayCategory.map((arr) => ( */}
-                            <TouchableOpacity /* key={arr.id} */ style={styles.radio} onPress={() => setCategorias('arr')}>
-                                <RadioButton /* key={arr.id} */ value={'arr'} />
+                        {(categorias.length > 0) && categorias.map(cate => (
+                            <TouchableOpacity key={cate.id} style={styles.radio} onPress={() => { selectCategory(cate.id) }}>
+                                <RadioButton
+                                    key={cate.id}
+                                    value={cate.id}
+                                    status={(category === cate.id) ? 'checked' : 'unchecked'}
+                                    onPress={() => { selectCategory(cate.id) }} />
                                 <View style={{ width: 30, height: 30, marginRight: 5 }}>
                                     <Image
-                                        source={logo}
+                                        source={{ uri: cate.icon_url }}
                                         style={{ width: 30, height: 30 }}
                                     />
                                 </View>
-                                <Text>arr.category_name</Text>
+                                <Text>{cate.name}</Text>
                             </TouchableOpacity>
-                            {/* )) : <View/>} */}
-                        </RadioButton.Group>
+                        ))}
                     </Container>
                     <Text style={styles.title2}>Serviço oferecido:</Text>
 
                     {/* Subcategorias cadastradas para o usuário */}
-                    {/* {arraySubCategory.map((arr2) => ( */}
-                    {/* (arr2.category_id === categorias.categorie_id) ? //Filtra a seleção da categoria com as subcategorias */}
-                    <Container style={styles.radioGroup2}>
-                        <RadioButton.Group
-                            onValueChange={newValue2 => { setSubCategoria(newValue2); }}
-                            value={'subCategoria'}
-                        >
-                            <TouchableOpacity /* key={arr2.id} */ style={styles.radio2} onPress={() => setSubCategoria('arr2.name')}>
-                                <RadioButton /* key={arr2.id} */ value={'arr2.name'} />
-                                <Text>{'arr2.name'}</Text>
-                            </TouchableOpacity>
-                        </RadioButton.Group>
-                    </Container>
-                    {/* : */}
-                    {/* <View style={{width:0, height:0}}/> */}
-                    {/* ))} */}
-
-                    {/* {(arraySubCategory.map((arr3) => (
-                (arr3.name === subCategoria) ? */}
+                    {(category === '') ? <View /> :
+                        <>
+                            {
+                                subCategorias.map(sub => (
+                                    (sub.category_id !== category) ? <View /> :
+                                        <>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: '5%' }}>
+                                                <RadioButton
+                                                    key={sub.id}
+                                                    value={sub.id}
+                                                    status={(subCategoriasSelect === sub.id) ? 'checked' : 'unchecked'}
+                                                    onPress={() => { setSubCategoriasSelect(sub.id) }} />
+                                                <Text>{sub.name}</Text>
+                                            </View>
+                                            {(subCategoriasSelect) ?
+                                                <>
+                                                    <Text style={styles.title}>Preço:</Text>
+                                                    <TextInputMask
+                                                        style={styles.inputMask}
+                                                        type='money'
+                                                        options={{
+                                                            precision: 2,
+                                                            separator: ',',
+                                                            delimiter: '.',
+                                                            unit: 'R$',
+                                                            suffixUnit: ''
+                                                        }}
+                                                        value={price}
+                                                        editable={true}
+                                                        onChangeText={value => setPrice(value)}
+                                                    />
+                                                </>
+                                                : <View />}
+                                        </>
+                                ))
+                            }
+                        </>
+                    }
                     <>
-                        <Text style={styles.title}>Preço:</Text>
-                        <TextInputMask
-                            //   ref={priceRef}
-                            style={styles.inputMask}
-                            type="money"
-                            options={{
-                                precision: 2,
-                                separator: ',',
-                                delimiter: '.',
-                                unit: 'R$',
-                                suffixUnit: ''
-                            }}
-                            value={0}
-                            editable={false}
-                        />
-                        <Container horizontal vertical>
-                            <Text>Descrição:</Text>
-                            <TextInput
-                                value={comentario} setValue={setComentario} />
-                        </Container>
                         <Container horizontal vertical>
                             <Button
-                                onPress={() => console.log('submit(arr3.price)')} //submit para funcionar
+                                onPress={submit} //submit para funcionar
                                 text="SALVAR SERVIÇO"
                                 fullWidth
                                 loading={loading}
@@ -228,12 +269,15 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     inputMask: {
-        marginHorizontal: '3%',
-    },
-    inputask: {
-        marginHorizontal: '3%',
-        borderBottomColor: '#000',
-        borderBottomWidth: 2,
+        marginLeft: '3%',
+        marginVertical: '3%',
+        width: '25%',
+        height: 40,
+        borderWidth: 1,
+        borderColor: theme.colors.black,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        textAlign: 'center',
     },
     radio: {
         margin: 10,

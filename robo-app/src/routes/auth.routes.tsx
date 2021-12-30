@@ -8,6 +8,12 @@ import { ClientRegister } from '../pages/ClientRegister/Cadastro';
 import { EmpresaRegister } from '../pages/EmpresaRegister/Cadastro';
 import { SelecionarPerfil } from '../pages/SelecionarPerfil';
 
+import { AdmHome } from '../pages/AdmHome';
+import { AdmMetrics } from '../pages/AdmHome/AdmMetrics';
+
+import { Home } from '../pages/Home';
+import { Home as EmpresaTIHome } from '../pages/EmpresaTIHome';
+
 const Auth = createStackNavigator();
 
 const AuthRoutes: React.FC = () => (
@@ -23,6 +29,11 @@ const AuthRoutes: React.FC = () => (
         <Auth.Screen name="ClientRegister" component={ClientRegister} />
         <Auth.Screen name="EmpresaRegister" component={EmpresaRegister} />
         <Auth.Screen name="SelecionarPerfil" component={SelecionarPerfil}/>
+
+        {/* <Auth.Screen name="AdmHome" component={AdmHome}/>
+        <Auth.Screen name="AdmMetrics" component={AdmMetrics}/>
+        <Auth.Screen name="EmpresaTIHome" component={EmpresaTIHome}/>
+        <Auth.Screen name="Home" component={Home}/> */}
 
     </Auth.Navigator>
 );

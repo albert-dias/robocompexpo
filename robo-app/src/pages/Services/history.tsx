@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import { Text } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { useStateLink, useStateLinkUnmounted } from '@hookstate/core';
 
 // Import de páginas
 import TextInput from '../../components/Input';

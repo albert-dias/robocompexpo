@@ -1,5 +1,5 @@
 // Import de pacotes
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     Alert,
     Image,
@@ -14,23 +14,23 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Checkbox, Dialog, Portal, Text } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ParamListBase } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { useStateLink, useStateLinkUnmounted } from '@hookstate/core';
 
 // Import de páginas
 import { Input } from '../../components/GlobalCSS';
 import Container, { ContainerTop } from '../../components/Container';
 import theme from '../../global/styles/theme';
-import GlobalContext from '../../context';
 import request from '../../util/request';
 
 // Import de imagens
 import imgBanner from '../../../assets/images/banner.png';
 import logo from '../../../assets/images/logo_branca_robocomp.png';
+import api from '../../services/api';
 
-export function Agenda() {
+export function Agenda({ navigation }: StackScreenProps<ParamListBase>) {
     // Variáveis
-    // const authState = useStateLinkUnmounted(GlobalContext.auth.authStateRef);
 
     const [horarios, setHorarios] = useState([]);
     const [horaStart, setHoraStart] = useState(new Date());
@@ -79,7 +79,6 @@ export function Agenda() {
         console.log('HORAS 2: ' + currentDate.toString().substring(16, 21))
         setShow3(false);
     };
-
     const onChange3 = (event, selectedDate) => {
         const currentDate = selectedDate || horaSeletorStart;
         setShowEdit2(Platform.OS === 'ios');
@@ -96,38 +95,88 @@ export function Agenda() {
         setShowEdit3(false);
     };
 
-    /* const setAllWork = async () => {
+    // Setar todos os horários de trabalho na tela
+    const setAllWork = async () => {
         try {
-            const response = request.authGet('Worktime/setAllWorkTime');
-            setHorarios(response.result.horarios);
-            console.log(JSON.stringify(response.result));
+            const response = await api.get('user/schedule');
+
+            setHorarios(response.data.sort((n1, n2) => {
+                if (n1.weekday > n2.weekday) {
+                    return 1;
+                }
+
+                if (n1.weekday < n2.weekday) {
+                    return -1;
+                }
+
+                return 0;
+            }));
+            // console.log(response.data);
         } catch (e) { console.log(e); }
     };
 
-    const addWork = async (id) => {
+    // Adicionar novos horários de trabalho
+    const addWork = async () => {
         var checklist = [checked0, checked1, checked2, checked3, checked4, checked5, checked6];
-        var weekday = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+        var weekday = ['0', '1', '2', '3', '4', '5', '6'];
 
+        let atv = [];
         contador = 0;
 
         for (var i = 0; i < checklist.length; i++) {
             if (checklist[i]) {
+                atv.push(Number(weekday[i]));
                 contador++;
-                var atv = (ativo) ? 0 : 1;
-                // TRY~CATCH para adicionar um horário de serviço
             }
         }
 
         if (contador !== 0) {
             setShow(false);
-            // setAllWork();
+
+            try {
+                const response = await api.post('user/schedule', {
+                    weekday: atv,
+                    start_time: horaStart.toString().substring(16, 24),
+                    finish_time: horaFinish.toString().substring(16, 24),
+                });
+
+                console.log('RESPONSE: %s', response.data);
+                setAllWork();
+            } catch (e) { console.log(e.response.data.message); }
+
         } else {
             Alert.alert('AVISO!!!', 'Não foi marcado nenhum dia da semana.',
                 [{ text: 'OK', onPress: () => { } }]
             );
         }
-    } */
+    }
 
+    // Update dos horários já cadastrados
+    const updateWork = async () => {
+        console.log('HoraSelStart: ' + horaSeletorStart.toString().substring(16, 24));
+        console.log('HoraSelFinish: ' + horaSeletorFinish.toString().substring(16, 24));
+        console.log('ID: ' + workID);
+        try {
+            const response = await api.put('user/schedule', {
+                weekday_id: workID,
+                start_time: horaSeletorStart.toString().substring(16, 22)+'00',
+                finish_time: horaSeletorFinish.toString().substring(16, 22)+'00',
+            });
+            
+            console.log(response.data);
+            setAllWork();
+            setShowEdit(false);
+        } catch (e) { console.log('ERROR DE EDIT, %s', e.response.data.message); }
+    }
+    
+    const delWork = async (workID) => {
+        try{
+            const response = await api.put('user/schedule', {
+                weekday_id: workID,
+            });
+            setAllWork();
+        } catch (e) { console.log('ERROR DE EDIT, %s', e.response.data.message); }
+    }
     function setChecks() {
         setChecked0(false);
         setChecked1(false);
@@ -142,6 +191,7 @@ export function Agenda() {
 
     useEffect(() => {
         setShow(false);
+        setAllWork();
     }, []);
 
     // Construção da página
@@ -174,7 +224,7 @@ export function Agenda() {
                             }}
                         />
                         <TouchableOpacity
-                            onPress={() => console.log('voltar')}
+                            onPress={() => navigation.goBack()}
                             style={{
                                 position: 'absolute',
                                 alignSelf: 'flex-start',
@@ -223,6 +273,46 @@ export function Agenda() {
                         fontWeight: 'bold',
                         marginBottom: '5%'
                     }}>Horários de Trabalho:</Text>
+                    <ScrollView>
+                        <View style={styles.corpo}>
+                            <View style={{ flex: 1, flexDirection: 'column', marginHorizontal: '5%' }}>
+                                {(horarios.map(hora => (
+                                    <View style={{ flexDirection: 'row', width: '100%', marginTop: 2, alignItems: 'center' }}>
+                                        <Text style={styles.norma1}>{week[hora.weekday]}</Text>
+                                        <Text style={styles.norma2}>{hora.start_time.toString()}</Text>
+                                        <Text style={styles.norma3}>-</Text>
+                                        <Text style={styles.norma4}>{hora.finish_time.toString()}</Text>
+                                        <TouchableOpacity style={{ marginRight: 5, marginLeft: 'auto' }}
+                                            onPress={() => { setWorkID(hora.id); setShowEdit(true) }}
+                                        >
+                                            <FontAwesome5
+                                                name='edit'
+                                                size={35}
+                                                color={theme.colors.contrast}
+                                            />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={{ marginRight: 5, marginLeft: 'auto' }}
+                                            onPress={() => {
+                                                Alert.alert('AVISO', 'Deseja excluir esse horário?',
+                                                    [{
+                                                        text: 'SIM',
+                                                        onPress: () => { delWork(hora.id) }
+                                                    }, {
+                                                        text: 'NÃO',
+                                                        onPress: () => { }
+                                                    }])
+                                            }}>
+                                            <FontAwesome5
+                                                name='trash-alt'
+                                                size={35}
+                                                color={theme.colors.contrast}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                )))}
+                            </View>
+                        </View>
+                    </ScrollView>
                 </View>
                 <ScrollView style={{ marginBottom: '30%' }}>
                     <Portal>
@@ -315,7 +405,7 @@ export function Agenda() {
                                         display='clock'
                                         onChange={onChange}
                                     />}
-                                    <TouchableWithoutFeedback onPress={() => setShow2(true)} disabled={ativo}>
+                                    <TouchableWithoutFeedback onPress={() => { setShow2(true) }} disabled={ativo}>
                                         <View style={(ativo) ? styles.hourView2 : styles.hourView}>
                                             <Text style={{ fontSize: 13 }}>Início</Text>
                                             <Text style={{ fontSize: 15 }}>{horaStart.toString().substring(16, 21)}</Text>
@@ -327,7 +417,6 @@ export function Agenda() {
                                         is24Hour={true}
                                         display='clock'
                                         onChange={onChange2}
-
                                     />}
                                     <TouchableWithoutFeedback onPress={() => setShow3(true)} disabled={ativo}>
                                         <View style={(ativo) ? styles.hourView2 : styles.hourView}>
@@ -344,39 +433,60 @@ export function Agenda() {
                                     <Text>Fechado</Text>
                                 </View>
                                 <View style={{ flexDirection: 'row', marginTop: '10%', alignSelf: 'center' }}>
-                                    <Dialog.Actions><TouchableOpacity style={styles.touchDialog3} onPress={() => console.log('addWork()')}><Text>Adicionar</Text></TouchableOpacity></Dialog.Actions>
+                                    <Dialog.Actions><TouchableOpacity style={styles.touchDialog3} onPress={() => addWork()}><Text>Adicionar</Text></TouchableOpacity></Dialog.Actions>
                                     <Dialog.Actions><TouchableOpacity onPress={() => setChecks()} style={styles.touchDialog3}><Text>Cancelar</Text></TouchableOpacity></Dialog.Actions>
                                 </View>
                             </Dialog.Content>
                         </Dialog>
                     </Portal>
-                    <View style={styles.corpo}>
-                        <View style={{ flexDirection: 'column', marginHorizontal: '5%' }}>
-                            {week.map((semana) => (
-                                (semana !== undefined) ? <>
-                                    <View style={{ flexDirection: 'column', height: 'auto' }}>
-                                        <View style={styles.norma1}>
-                                            <Text style={styles.norma1text}>{semana}</Text>
-                                            {horarios.map((hora) => (
-                                                <View style={{ flexDirection: 'row' }}>
-                                                    {(hora.opcao === semana) ?
-                                                        <View style={{ flexDirection: 'row', width: '100%', marginTop: 2 }}>
-                                                            <Text style={styles.norma2}>{hora.start_time.toString().substring(16, 21)}</Text>
-                                                            <Text style={styles.norma3}>-</Text>
-                                                            <Text style={styles.norma4}>{hora.finish_time.toString().substring(16, 21)}</Text>
-                                                        </View>
-                                                        :
-                                                        <View></View>}
-                                                </View>
-                                            ))}
-                                        </View>
-                                    </View>
-
-                                </> : <></>
-                            ))}
-                        </View>
-                    </View>
                 </ScrollView>
+                <Portal>
+                    <Dialog style={styles.dialog} visible={showEdit} onDismiss={() => setChecks()}>
+                        <Dialog.Title style={{ paddingTop: 65 }}>Editar Horário</Dialog.Title>
+                        <Dialog.Content style={{ flexDirection: 'column' }}>
+                            <View style={{ marginHorizontal: '5%', marginTop: 10, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                                {showEdit2 && <DateTimePicker
+                                    value={horaSeletorStart}
+                                    mode='time'
+                                    is24Hour={true}
+                                    display='clock'
+                                    onChange={onChange3}
+                                />}
+                                <Input
+                                    style={{ width: '35%' }}
+                                    mode='flat'
+                                    label='Abre:'
+                                    value={horaSeletorStart.toString().substring(16, 21)}
+                                    onChangeText={() => setShowEdit2(true)}
+                                    underlineColor={theme.colors.black}
+                                    allowFontScaling
+                                    onFocus={() => setShowEdit2(true)}
+                                />
+                                {showEdit3 && <DateTimePicker
+                                    value={horaSeletorFinish}
+                                    mode='time'
+                                    is24Hour={true}
+                                    display='clock'
+                                    onChange={onChange4}
+                                />}
+                                <Input
+                                    style={{ width: '35%' }}
+                                    mode='flat'
+                                    label='Fecha:'
+                                    value={horaSeletorFinish.toString().substring(16, 21)}
+                                    onChangeText={() => setShowEdit3(true)}
+                                    underlineColor={theme.colors.black}
+                                    allowFontScaling
+                                    onFocus={() => setShowEdit3(true)}
+                                />
+                            </View>
+                            <View style={{ flexDirection: 'row', marginTop: '10%', alignSelf: 'center' }}>
+                                <Dialog.Actions><TouchableOpacity style={styles.touchDialog3} onPress={() => { updateWork() }}><Text>Alterar</Text></TouchableOpacity></Dialog.Actions>
+                                <Dialog.Actions><TouchableOpacity style={styles.touchDialog3} onPress={() => { setChecks() }}><Text>Cancelar</Text></TouchableOpacity></Dialog.Actions>
+                            </View>
+                        </Dialog.Content>
+                    </Dialog>
+                </Portal>
             </Container>
         </>
     );
@@ -409,7 +519,7 @@ const styles = StyleSheet.create({
         height: 'auto',
     },
     buttonText: {
-        color: theme.colors.whitepure,
+        color: theme.colors.white,
         fontSize: 20,
     },
     buttonBorder: {
@@ -432,8 +542,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    norma1: { width: '35%' },
-    norma1text: { fontWeight: 'bold' },
+    norma1: { width: '35%', fontWeight: 'bold' },
     norma2: { width: 'auto', textAlignVertical: 'center' },
     norma3: { width: 'auto', marginHorizontal: 10, textAlignVertical: 'center' },
     norma4: { width: 'auto', textAlignVertical: 'center' },

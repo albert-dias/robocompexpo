@@ -16,7 +16,7 @@ import { Request } from '../pages/Services/request';
 import { RequestServices } from '../pages/Services/list';
 import { SelectedService } from '../pages/Services/selected';
 import { ShoppingCart } from '../pages/ShoppingCart';
-import { ShowService } from '../pages/Services/show';
+import { ShowServices } from '../pages/Services/show';
 import { UserTerms } from '../pages/UserTerms';
 import { YourRequests } from '../pages/Services/yourRequest';
 import { Profile } from '../pages/Profile';
@@ -45,7 +45,7 @@ const UserRoutes: React.FC = () => (
         <Auth.Screen name="RequestServices" component={RequestServices} />
         <Auth.Screen name="SelectedService" component={SelectedService} />
         <Auth.Screen name="ShoppingCart" component={ShoppingCart} />
-        <Auth.Screen name="ShowService" component={ShowService} />
+        <Auth.Screen name="ShowServices" component={ShowServices} />
         <Auth.Screen name="UserTerms" component={UserTerms} />
         <Auth.Screen name="YourRequests" component={YourRequests} />
     </Auth.Navigator>

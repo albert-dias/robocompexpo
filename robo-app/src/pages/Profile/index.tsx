@@ -7,7 +7,6 @@ import {
 import { Image, ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { useStateLink, useStateLinkUnmounted } from '@hookstate/core';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 // Import de páginas

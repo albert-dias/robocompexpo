@@ -1,9 +1,9 @@
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 
 type RootAppStackParamListUndefinedRoutes = 'Login'
+| 'LoggedRoutes'
 | 'ClientRegister'
-| 'EmpresaRegister'
-| 'LoggedRoutes';
+| 'EmpresaRegister';
 
 export type RootAppStackParamList = {
   [s in RootAppStackParamListUndefinedRoutes]: undefined

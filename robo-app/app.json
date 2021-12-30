@@ -3,9 +3,13 @@
     "name": "robocomp",
     "slug": "Robocomp",
     "version": "1.0.0",
+    "orientation": "portrait",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "android": {
+      "package": "com.arthurcorps.Robocomp"
+    }
   },
   "name": "robocomp"
 }

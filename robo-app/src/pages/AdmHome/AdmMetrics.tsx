@@ -5,18 +5,22 @@ import { Alert, Image, ImageBackground, StyleSheet, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ParamListBase } from '@react-navigation/native';
 
 // Import de páginas
 import Container, { ContainerTop } from '../../components/Container';
 import theme from '../../global/styles/theme';
+import { useAuth } from '../../hooks/auth';
 
 // Import de imagens
 import logo from '../../../assets/images/logo_branca_robocomp.png';
 import imgBanner from '../../../assets/images/banner.png';
 import { Value } from 'react-native-reanimated';
 
-export function AdmMetrics() {
+export function AdmMetrics({ navigation }: StackScreenProps<ParamListBase>) {
     // Variáveis
+    const { signOut } = useAuth();
     const [list, setList] = useState(['']);
 
     const changeValue = (val, index) => {
@@ -70,7 +74,7 @@ export function AdmMetrics() {
                         alignSelf: 'flex-start',
                         marginBottom: '2%'
                     }}
-                        onPress={async () => { console.log('login') }}>
+                        onPress={async () => { signOut() }}>
                         <FontAwesome5
                             name='power-off'
                             color={theme.colors.white}
@@ -103,7 +107,7 @@ export function AdmMetrics() {
                 <Text style={{ marginHorizontal: 10, marginTop: 5 }}>Clientes</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.gray, justifyContent: 'center' }}>
-                <TouchableOpacity onPress={() => { console.log('voltar') }}>
+                <TouchableOpacity onPress={() => { navigation.goBack() }}>
                     <FontAwesome5
                         name='users-cog'
                         colors={theme.colors.contrast}

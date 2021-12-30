@@ -12,12 +12,15 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { animated } from "react-spring";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
+import { StackScreenProps } from "@react-navigation/stack";
+import { ParamListBase } from "@react-navigation/native";
 import styled from "styled-components/native";
 
 // import de páginas
 import Container, { ContainerTop } from "../../components/Container";
 import theme from "../../global/styles/theme";
 import { BottomNav } from "./style";
+import { useAuth } from "../../hooks/auth";
 
 // Import de imagens
 import imgBanner from '../../../assets/images/banner.png';
@@ -28,11 +31,13 @@ import MenuButton from "../../components/MenuButton";
 //-----Início do código-----
 //--------------------------
 
-export function Home() {
+export function Home({ navigation }: StackScreenProps<ParamListBase>) {
 
     // Variáveis
     const [open, setOpen] = useState(false);
     const [hide, setHide] = useState(false);
+
+    const { signOut } = useAuth();
 
     // Construção da página
     return (
@@ -72,13 +77,27 @@ export function Home() {
                 </ContainerTop>
                 {/* Até o  fechar o ScrollView é a parte do meio da página*/}
                 <View style={styles.viewn}>
+                    <TouchableOpacity style={{
+                        alignContent: 'center',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                        marginBottom: '2%'
+                    }}
+                        onPress={async () => { signOut() }}>
+                        <FontAwesome5
+                            name='power-off'
+                            color={theme.colors.black}
+                            size={40}
+                        />
+                    </TouchableOpacity>
                     <View style={styles.duplocontainer}>
                         <View style={styles.itemsContainer}>
                             <View style={styles.itemsRow}>
                                 {/* Botão de ACOMPANHAR SERVIÇOS */}
                                 <TouchableOpacity
                                     activeOpacity={0.7}
-                                    onPress={() => { console.log('Acompanha os serviços para o técnico aceitar ou já aceitos') }} //Mudar para a página depois
+                                    onPress={() => { navigation.navigate('Services') }} //Mudar para a página depois
+                                // onPress={() => { console.log('Acompanha os serviços para o técnico aceitar ou já aceitos') }} //Mudar para a página depois
                                 >
                                     <LinearGradient
                                         colors={['#282D41', '#03A4A9']}
@@ -102,7 +121,7 @@ export function Home() {
                                 {/* Botão de MEUS SERVIÇOS */}
                                 <TouchableOpacity
                                     activeOpacity={0.7}
-                                    onPress={() => { console.log('Lista os serviços que o técnico faz') }} //Mudar para a página depois
+                                    onPress={() => { navigation.navigate('YourServices') }} //Mudar para a página depois
                                 >
                                     <LinearGradient
                                         colors={['#282D41', '#03A4A9']}
@@ -127,7 +146,7 @@ export function Home() {
                                 {/* Botão dos HORÁRIOS do servidor */}
                                 <TouchableOpacity
                                     activeOpacity={0.7}
-                                    onPress={() => {console.log('Mostra os horários de trabalho')}} //Mudar para a página depois
+                                    onPress={() => { navigation.navigate('Agenda') }} //Mudar para a página depois
                                 >
                                     <LinearGradient
                                         colors={['#282D41', '#03A4A9']}

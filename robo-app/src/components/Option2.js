@@ -40,7 +40,7 @@ const Option2 = props => {
     active: {
       opacity: 0.7,
       borderWidth: 3,
-      borderColor: colors.orange,
+      borderColor: theme.colors.orange,
     },
     inactive: {
       borderWidth: 3,

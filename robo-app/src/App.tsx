@@ -14,7 +14,7 @@ import AppLoading from 'expo-app-loading';
 
 // Import de páginas
 import theme from './global/styles/theme';                      //Temas
-import { Intro } from './Intro';           //AppLoading
+import { Intro } from './Intro';                                //AppLoading
 import { SelecionarPerfil } from './pages/SelecionarPerfil';    //SelecionarPerfil
 
 // Páginas
@@ -24,7 +24,7 @@ import { AddService } from './pages/Services/add';                      //Adicio
 import { AdmHome } from './pages/AdmHome';                              //Página inicial do adm
 import { AdmMetrics } from './pages/AdmHome/AdmMetrics';                //Página de parâmetros do adm
 import { Agenda } from './pages/Agenda';                                //Horários do técnico
-import { EditPassword } from './pages/EditPassword';                    //Mudar a senha
+// import { EditPassword } from './pages/EditPassword';                    //Mudar a senha
 import { EditService } from './pages/Services/edit';                    //Editar serviço (técnico)
 import { FinishedOS } from './pages/Services/finishedOS';               //Serviços finalizados (técnico)
 import { FinishedOSClient } from './pages/Services/finishedOSClient';   //Serviços finalizados (cliente)
@@ -37,10 +37,10 @@ import { InProgress } from './pages/InProgress';                        //Menu p
 import { Plans } from './pages/Plans';                                  //Mostra os planos disponíveis
 import { Request } from './pages/Services/request';                     //Mostra o pedido individual (cliente)
 import { RequestServices } from './pages/Services/list';                //Lista de serviços
-import { SearchService } from './pages/Services/search';                //Pesquisar serviço (técnico)
+import { SearchServices } from './pages/Services/search';                //Pesquisar serviço (técnico)
 import { SelectedService } from './pages/Services/selected';            //Serviço selecionado
 import { ShoppingCart } from './pages/ShoppingCart';                    //Carrinho de compras
-import { ShowService } from './pages/Services/show';                    //Menu de serviços pedidos (cliente)
+import { ShowServices } from './pages/Services/show';                    //Menu de serviços pedidos (cliente)
 import { TrackServices } from './pages/Services/status';                //Saber os serviços agendados (técnico)
 import { UserTerms } from './pages/UserTerms';                          //Termos de uso
 import { YourRequests } from './pages/Services/yourRequest';            //Menu de serviços (cliente)
@@ -52,8 +52,11 @@ import { ClientRegister } from './pages/ClientRegister/Cadastro';       //Regist
 import { EmpresaRegister } from './pages/EmpresaRegister/Cadastro';     //Registro de técnico
 import { EditProfile } from './pages/EditProfile';                      //Mudar informações do perfil
 import { Login } from './pages/Login';                                  //Login
+import { GooglePlaces } from './pages/GooglePlaces';
 
 import Routes from './routes';
+import AppProvider from './hooks';
+import AuthRoutes from './routes/auth.routes';
 
 export default function App() {
     const [fontsLoaded] = useFonts({
@@ -63,15 +66,17 @@ export default function App() {
     });
 
     if (!fontsLoaded) {
-        return <AdmHome />
+        return <Home />
     }
 
     return (
         <NavigationContainer>
             <ThemeProvider theme={theme}>
                 <PaperProvider>
-                    <StatusBar backgroundColor='transparent' barStyle='dark-content' translucent />
-                    <Routes />
+                    <AppProvider>
+                        <StatusBar backgroundColor='transparent' barStyle='dark-content' translucent />
+                        <Routes />
+                    </AppProvider>
                 </PaperProvider>
             </ThemeProvider>
         </NavigationContainer>

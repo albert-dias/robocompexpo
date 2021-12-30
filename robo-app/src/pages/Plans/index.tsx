@@ -1,6 +1,5 @@
 // Import de pacotes
 import React, { useEffect, useState } from 'react';
-import { useStateLink, useStateLinkUnmounted } from '@hookstate/core';
 import { Image, ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons';

@@ -25,6 +25,7 @@ import AuthRoutes from './routes/auth.routes';
 
 // Botão de SKIP da TELA INICAL
 const SkipButton = ({ onPress }) => {
+
     return (
         <View style={styles.pularView}>
             <TouchableOpacity onPress={onPress}>
@@ -35,9 +36,11 @@ const SkipButton = ({ onPress }) => {
 };
 
 // Função principal da TELA INICIAL
-export function Intro({navigation}: StackScreenProps<ParamListBase>) { //Add {navigation}
-    StatusBar.setHidden(true);
+export function Intro({ navigation }: StackScreenProps<ParamListBase>) { //Add {navigation}
+    // Keys
+    var swiperK, image1K, image2K, image3K;
 
+    StatusBar.setHidden(true);
     return (
         <Swiper
             showsPagination={true}
@@ -45,7 +48,7 @@ export function Intro({navigation}: StackScreenProps<ParamListBase>) { //Add {na
             loop={false}
         >
             {/* SLIDE 1 */}
-            <View style={styles.slide}>
+            <View style={styles.slide} key={image1K}>
                 <Image source={logo} />
 
                 <View style={styles.image1}>
@@ -57,7 +60,7 @@ export function Intro({navigation}: StackScreenProps<ParamListBase>) { //Add {na
             </View>
 
             {/* SLIDE 2 */}
-            <View style={styles.slide}>
+            <View style={styles.slide} key={image2K} >
                 <Image source={logo} />
 
                 <View style={styles.image1}>
@@ -67,7 +70,7 @@ export function Intro({navigation}: StackScreenProps<ParamListBase>) { //Add {na
                 </View>
             </View>
             {/* SLIDE 3 */}
-            <View style={styles.slide}>
+            <View style={styles.slide} key={image3K} >
                 <Image source={logo} />
                 <View style={styles.containerCenter}>
                     <View style={styles.image1}>

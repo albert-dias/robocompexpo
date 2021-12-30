@@ -12,7 +12,6 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Container, { ContainerTop } from '../../components/Container';
 import theme from '../../global/styles/theme';
 import request from '../../util/request';
-import GlobalContext from '../../context';
 
 // Import de imagens
 import imgBanner from '../../../assets/images/banner.png';

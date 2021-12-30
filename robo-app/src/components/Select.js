@@ -1,9 +1,9 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import Option2 from './Option2';
-import { GroupControl } from './GlobalCSS';
+import Option2 from '../../src/components/Option2.js';
+import { GroupControl } from '../pages/Login/style';
 
-const Select = props => {
+export default Select = (props) => {
     const { options, onPress, selected } = props;
 
     return (
@@ -23,7 +23,6 @@ const Select = props => {
         </SafeAreaView>
     );
 };
-export default Select;
 
 const styles = StyleSheet.create({
     itemsContainer: {

@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Text } from 'react-native-paper';
 import { Image, ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useStateLink, useStateLinkUnmounted } from '@hookstate/core';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { showMessage } from 'react-native-flash-message';
 import { TextInputMask } from 'react-native-masked-text';
@@ -76,7 +75,6 @@ export function EditProfile() {
     const [email, setEmail] = useState(useWithTouchable(emailRef));
     const [phone, setPhone] = useState(useWithTouchable(phoneRef));
 
-    const profile = useStateLink(profileRef);
     const texto = ' ';
     var textoN, textoA, textoE, textoP;
 

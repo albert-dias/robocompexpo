@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Image, StyleSheet, Text, View } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { colors } from 'src/theme';
+import theme from '../global/styles/theme';
 
 const Option3 = props => {
     const { onPress, isSelected, urlIcon, name } = props;
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     active: {
         opacity: 0.7,
         borderWidth: 3,
-        borderColor: colors.green,
+        borderColor: theme.colors.green,
     },
     inactive: {
         borderWidth: 3,

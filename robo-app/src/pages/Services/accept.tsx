@@ -4,7 +4,6 @@ import { Alert, Image, ImageBackground, StyleSheet, TouchableOpacity, View } fro
 import { Text, TextInput } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { useStateLink, useStateLinkUnmounted } from '@hookstate/core';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 // Import de páginas

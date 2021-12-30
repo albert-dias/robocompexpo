@@ -1,46 +1,31 @@
 // Import de pacotes
-import React, { useEffect, useRef, useState } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
-import { TextInputMask } from 'react-native-masked-text';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import emailValidator from 'email-validator';
-import { Picker } from '@react-native-picker/picker';
+import React, { useRef, useState } from 'react';
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { ParamListBase } from '@react-navigation/routers';
+import { ParamListBase } from '@react-navigation/native';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { TextInputMask } from 'react-native-masked-text';
+import emailValidator from 'email-validator';
 
 // Import de páginas
-import { GroupControl, Input } from '../../components/GlobalCSS';
+import GlobalStyle from '../../components/GlobalStyle';
 import Container, { ContainerTop } from '../../components/Container';
 import { PanelSlider } from '../../components/PanelSlider';
-import GlobalContext from '../../context';
-import { InputWarning } from '../../components/InputWarning';
-import useWithTouchable from '../../util/useWithTouchable';
-import theme from '../../global/styles/theme';
 import { Button } from '../../components/Button';
-import { FCWithAppStackNavigator } from '../AppStackNavigator';
-import request from '../../util/request';
-import transformDate from '../../util/transformDate';
-import useToken from '../../util/useToken';
-import { StateUser } from '../../context/auth';
-import AddressForm from '../../components/AddressForm';
-import GlobalStyle from '../../components/GlobalStyle';
+import { GroupControl, Input } from '../../components/GlobalCSS';
+import { InputWarning } from '../../components/InputWarning';
+import theme from '../../global/styles/theme';
+import api from '../../services/api';
 
-const { cpf: cpfValidator } = require('cpf-cnpj-validator');
-const { cnpj: cnpjValidator } = require('cpf-cnpj-validator');
-
-// Import de imagens
+// Import de Imagens
 import logo from '../../../assets/images/logo_branca_robocomp.png';
-import { add } from 'react-native-reanimated';
+
+const { cnpj: cnpjValidator, cpf: cpfValidator } = require('cpf-cnpj-validator');
 
 const styles = StyleSheet.create({
-    anuncioIcon: {
-        flex: 1,
-        marginHorizontal: 5,
-        justifyContent: 'center'
-    },
     textStyleF: {
         fontSize: 16,
         paddingLeft: 20,
@@ -50,411 +35,388 @@ const styles = StyleSheet.create({
         padding: 3,
         alignSelf: 'center',
     },
+    anuncioIcon: {
+        flex: 1,
+        marginHorizontal: 5,
+        justifyContent: 'center'
+    },
 });
 
-const {
-    cadastro: {
-//         // Passo 1
-        apelidoRef,
-        cpfRef,
-        nameRef,
-        phoneRef,
-        // Passo 2
-        genderRef,
-        birthdayRef,
-        // Passo 3
-        addressRef,
-        numberRef,
-        complementRef,
-        cityRef,
-        stateRef,
-        districtRef,
-        cepRef,
-        latitudeRef,
-        longitudeRef,
-        // Passo 4
-        emailRef,
-        passwordRef,
-        confirmPasswordRef,
-
-        clearForm,
-    }
-} = GlobalContext;
-
-// let // Passo 1
-    // apelidoRef, cpfRef, nameRef, phoneRef,
-    // Passo 2
-    // genderRef, birthdayRef,
-    // Passo 3
-    // addressRef, numberRef, complementRef, cityRef, stateRef, districtRef, cepRef, latitudeRef, longitudeRef,
-    // Passo 4
-    // emailRef, passwordRef, confirmPasswordRef;
-
 export function ClientRegister({ navigation }: StackScreenProps<ParamListBase>) {
+    //Variáveis
     const [loading, setLoading] = useState(false);
 
     //Vairáveis para passar de um campo para outro
     //Passo1
-    const apelidoInputRef = useRef(null);
-    const telefoneInputRef = useRef(null);
     const cpfInputRef = useRef(null);
+    const fullNameRef = useRef(null);
+    const telefoneRef = useRef(null);
+    //Passo 2
     const emailInputRef = useRef(null);
-    //passo 4
     const passwordInputRef = useRef(null);
     const confirmPasswordInputRef = useRef(null);
-
-    //Variáveis do passo 1
-    const nome = useWithTouchable(nameRef);
-    const apelido = useWithTouchable(apelidoRef);
-    const telefone = useWithTouchable(phoneRef);
-    const cpf = useWithTouchable(cpfRef);
-    //Variáveis do passo 2
-    const gender = useWithTouchable(genderRef);
-    const birthday = useWithTouchable(birthdayRef);
-    //Variáveis do passo 3
-    const address = useWithTouchable(addressRef);
-    const number = useWithTouchable(numberRef);
-    const complement = useWithTouchable(complementRef);
-    const city = useWithTouchable(cityRef);
-    const state = useWithTouchable(stateRef);
-    const district = useWithTouchable(districtRef);
-    const cep = useWithTouchable(cepRef);
-    const latitude = useWithTouchable(latitudeRef);
-    const longitude = useWithTouchable(longitudeRef);
-    //Variáveis do passo 4
-    const email = useWithTouchable(emailRef);
-    const password = useWithTouchable(passwordRef);
-    const [pass, setPass] = useState(0);
-    const confirmPassword = useWithTouchable(confirmPasswordRef);
-
     const [seePassword, setSeePassword] = useState(true);
     const [seeConfirmPassword, setSeeConfirmPassword] = useState(true);
 
-    const [filter, setFilter] = useState(false);
+    // Variáveis do Blur
+    const [fullNameBlur, setFullNameBlur] = useState(false);
+    const [nomeBlur, setNomeBlur] = useState(false);
+    const [phoneBlur, setPhoneBlur] = useState(false);
+    const [emailBlur, setEmailBlur] = useState(false);
+    const [passwordBlur, setPasswordBlur] = useState(false);
+    const [confirmPasswordBlur, setConfirmPasswordBlur] = useState(false);
+    const [CPFBlur, setCPFBlur] = useState(false);
+    const [birthDayBlur, setBirthDayBlur] = useState(false);
+
+    //Vairáveis do passo 1
+    const [fullName, setFullName] = useState('');
+    const [nome, setNome] = useState('');
+    const [phone, setPhone] = useState('');
+    const [cpf, setCPF] = useState('');
+    const [birthDay, setBirthDay] = useState('');
+
+    //Vairáveis do endereço
+    const [address, setAddress] = useState('');
+    const [number, setNumber] = useState('');
+    const [complement, setComplement] = useState('');
+    const [district, setDistrict] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [cep, setCEP] = useState('');
+    const [lat, setLat] = useState(0);
+    const [long, setLong] = useState(0);
+
+    //Variáveis do passo 2
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [pass, setPass] = useState(0);
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    //Variáveis auxiliares
     const [v, setV] = useState(false);
+    const [filter, setFilter] = useState(false);
 
     let hasErrors = false;
+
+    // Variável que guarda a chave para o uso do Google Maps
+    let apiKey = 'AIzaSyB0ijoL_gfvaD5WC1Qr27Ppf_ScpP_P62Y';
+
     const checkError = (flag: boolean) => {
         if (flag) { hasErrors = true; }
         return flag;
     };
 
-    return (
-        <GlobalStyle>
-            <KeyboardAwareScrollView
-                contentContainerStyle={{
-                    minHeight: '100%',
-                }}
-                style={{
-                    minHeight: '90%',
-                    marginTop: '5%',
-                    paddingBottom: '5%',
-                }}
-            >
-                <ContainerTop style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
-                    <Container
-                        pb
-                        // padding={30}
-                        style={{
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            justifyContent: 'center',
-                            width: '100%',
-                        }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
-                            <TouchableOpacity
-                                onPress={() => navigation.goBack()}
-                                style={{
-                                    position: 'relative',
-                                    alignSelf: 'flex-start',
-                                    marginTop: '40%',
-                                    marginLeft: '15%',
-                                    alignContent: 'flex-start',
-                                    alignItems: 'flex-start',
-                                }}>
-                                <FontAwesome5
-                                    name='chevron-left'
-                                    color={theme.colors.white}
-                                    size={50}
-                                />
-                            </TouchableOpacity>
-                            <Image
-                                source={logo}
-                                resizeMode="contain"
-                                style={{
-                                    alignSelf: 'center',
-                                    width: 200,
-                                    height: 200,
-                                    marginTop: -30,
-                                    marginBottom: -50,
-                                    marginRight: '25%',
-                                    marginLeft: 'auto',
-                                }}
-                            />
-                        </View>
-                        <Text style={styles.textStyleF}>
-                            RoboComp - Novo Usuário
-                        </Text>
-                    </Container>
-                </ContainerTop>
-                <View>
-                    <PanelSlider style={{ marginTop: 20 }}>
-                        {/* Passo 1 */}
-                        {/* GroupControl Nome Completo */}
-                        <GroupControl>
-                            <Input
-                                mode='flat'
-                                label='Nome Completo'
-                                value={nome.value}
-                                onChangeText={(text) => nome.set(text)}
-                                underlineColor={theme.colors.black}
-                                allowFontScaling
-                                autoCapitalize='words'
-                                onBlur={nome.onBlur}
-                                onSubmitEditing={() => apelidoInputRef.current.focus()}
-                            />
-                            <InputWarning
-                                text="Campo Obrigatório"
-                                valid={checkError(nome.value === '')}
-                                visible={nome.blurred}
-                            />
-                        </GroupControl>
-                        {/* GroupControl Apelido */}
-                        <GroupControl>
-                            <Input
-                                ref={apelidoInputRef}
-                                mode="flat"
-                                label="Apelido"
-                                value={apelido.value}
-                                onChangeText={text => apelido.set(text)}
-                                underlineColor={theme.colors.black}
-                                allowFontScaling
-                                onBlur={apelido.onBlur}
-                                onSubmitEditing={() =>
-                                    telefoneInputRef.current._inputElement.focus()
-                                }
-                            />
-                            <InputWarning
-                                text="Campo obrigatório"
-                                valid={checkError(apelido.value === '')}
-                                visible={apelido.blurred}
-                            />
-                        </GroupControl>
-                        {/* GroupControl Telefone */}
-                        <GroupControl>
-                            <TextInputMask
-                                type="cel-phone"
-                                options={{
-                                    maskType: 'BRL',
-                                    withDDD: true,
-                                    dddMask: '(99) ',
-                                }}
-                                customTextInput={Input}
-                                customTextInputProps={{
-                                    mode: 'flat',
-                                    label: 'Telefone',
-                                    underlineColor: theme.colors.black,
-                                    allowFontScaling: true,
-                                }}
-                                value={telefone.value}
-                                placeholder='DDD + número'
-                                onChangeText={text => telefone.set(text)}
-                                onBlur={telefone.onBlur}
-                                ref={telefoneInputRef}
-                                onSubmitEditing={() =>
-                                    emailInputRef.current.focus()
-                                }
-                            />
-                            <InputWarning
-                                text="Campo obrigatório"
-                                valid={checkError(telefone.value === '')}
-                                visible={telefone.blurred}
-                            />
-                        </GroupControl>
-                        {/* Passo 4 */}
-                        {/* GroupControl Email */}
-                        <GroupControl>
-                            <Input
-                                mode="flat"
-                                autoCapitalize="none"
-                                keyboardType="email-address"
-                                label="Email"
-                                value={email.value}
-                                ref={emailInputRef}
-                                onChangeText={(text) => email.set(text)}
-                                underlineColor={theme.colors.black}
-                                allowFontScaling
-                                onBlur={email.onBlur}
-                                onSubmitEditing={() => passwordInputRef.current.focus()}
-                            />
-                            <InputWarning
-                                text="Campo obrigatório"
-                                valid={checkError(email.value === '')}
-                                visible={email.blurred}
-                            />
-                            <InputWarning
-                                text="Email inválido"
-                                valid={checkError(email.value !== '' && !emailValidator.validate(email.value))}
-                                visible={email.blurred}
-                            />
-                        </GroupControl>
-                        {/* GroupControl Senha */}
-                        <GroupControl>
-                            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                <Input
-                                    style={{ width: '90%' }}
-                                    mode="flat"
-                                    label="Senha"
-                                    value={password.value}
-                                    secureTextEntry={seePassword}
-                                    onChangeText={text => { password.set(text); setPass(text.length); }}
-                                    underlineColor={theme.colors.black}
-                                    placeholder='Mínimo de 6 dígitos'
-                                    allowFontScaling
-                                    onBlur={password.onBlur}
-                                    ref={passwordInputRef}
-                                    onSubmitEditing={() => confirmPasswordInputRef.current.focus()}
-                                />
-                                <TouchableNativeFeedback
-                                    onPressIn={() => setSeePassword(false)}
-                                    onPressOut={() => setSeePassword(true)}
-                                >
-                                    <FontAwesome5
-                                        name={(seePassword) ? 'eye-slash' : 'eye'}
-                                        color={theme.colors.contrast}
-                                        size={30}
-                                    />
-                                </TouchableNativeFeedback>
-                            </View>
-                            <InputWarning
-                                text='Campo obrigatório'
-                                valid={checkError(password.value === '')}
-                                visible={password.blurred}
-                            />
-                            <InputWarning
-                                text='Senha muito pequena'
-                                valid={checkError(pass < 6 && password.value !== '')}
-                                visible={password.blurred}
-                            />
-                        </GroupControl>
-                        {/* GroupControl Confirmar senha */}
-                        <GroupControl>
-                            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                <Input
-                                    style={{ width: '90%' }}
-                                    mode="flat"
-                                    label="Confirmar senha"
-                                    value={confirmPassword.value}
-                                    secureTextEntry={seeConfirmPassword}
-                                    onChangeText={text => confirmPassword.set(text)}
-                                    underlineColor={theme.colors.black}
-                                    allowFontScaling
-                                    onBlur={confirmPassword.onBlur}
-                                    ref={confirmPasswordInputRef}
-                                    onSubmitEditing={() => { }}
-                                />
-                                <TouchableNativeFeedback
-                                    onPressIn={() => setSeeConfirmPassword(false)}
-                                    onPressOut={() => setSeeConfirmPassword(true)}
-                                >
-                                    <FontAwesome5
-                                        name={(seeConfirmPassword) ? 'eye-slash' : 'eye'}
-                                        color={theme.colors.contrast}
-                                        size={30}
-                                    />
-                                </TouchableNativeFeedback>
-                            </View>
-                            <InputWarning
-                                text="Campo obrigatório"
-                                valid={checkError(confirmPassword.value === '')}
-                                visible={confirmPassword.blurred}
-                            />
-                            <InputWarning
-                                text="Senhas não conferem"
-                                valid={checkError(confirmPassword.value !== '' && confirmPassword.value !== password.value)}
-                                visible={confirmPassword.blurred}
-                            />
-                        </GroupControl>
-                        {/* Passo 2 */}
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            alignSelf: 'center',
-                            width: '100%',
-                            justifyContent: 'center',
-                            height: 'auto',
-                        }}>
-                            {(!filter) ?
-                                <GroupControl>
-                                    {/* GroupControl passo 2 com CNPJ */}
-                                    <View style={{ flexDirection: 'column', width: '100%' }}>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                                            <Text style={{ marginHorizontal: 10 }}>CNPJ</Text>
-                                            <TouchableOpacity
-                                                style={styles.anuncioIcon}
-                                                onPress={() => { setFilter(!filter), cpf.set(cpf.value.slice(0, 14)) }}
-                                            >
-                                                <FontAwesome5
-                                                    name='toggle-off'
-                                                    color={theme.colors.green}
-                                                    size={25}
-                                                />
-                                            </TouchableOpacity>
-                                            <Text style={{ marginHorizontal: 10 }}>CPF</Text>
-                                        </View>
+    const submit = async () => {
 
-                                        <TextInputMask
-                                            type={'custom'}
-                                            options={{
-                                                mask: '99.999.999/9999-99',
-                                            }}
-                                            customTextInput={Input}
-                                            customTextInputProps={{
-                                                mode: 'flat',
-                                                label: 'CNPJ',
-                                                underlineColor: theme.colors.black,
-                                                allowFontScaling: true,
-                                            }}
-                                            placeholder='00.000.000/0000.00'
-                                            value={cpf.value}
-                                            onChangeText={text => cpf.set(text)}
-                                            onBlur={() => { cpf.onBlur; setV(false) }}
-                                            ref={cpfInputRef}
-                                            onSubmitEditing={() => {
-                                                console.log(cpf.value.replace(/[^0-9]+/g, ''));
-                                                setV(false);
-                                            }}
+        let cpfT = cpf.replace(/\D/g,"");
+
+        try {
+            const response = await api.post('user', {
+                plan_id: 1,
+                user_type_id: 2,
+                password,
+                name: nome,
+                lastname: fullName,
+                email,
+                document: cpfT,
+                birth: birthDay,
+                phone : phone.replace(/\D/g,""),
+                origin: 'mobile',
+
+                street: address,
+                number,
+                district,
+                city,
+                state,
+                zipcode: cep.replace(/\D/g,""),
+                lat,
+                long,
+            });
+
+            navigation.navigate('Login');
+        } catch (e) { console.log('RESPOSTA: %s', e.response.data.message); }
+
+    }
+
+    function localization() {
+        return (<GooglePlacesAutocomplete
+            placeholder='Search'
+            onPress={(data, details = null) => {
+                [
+                    setAddress(details.address_components[1].short_name),
+                    setNumber(details.address_components[0].short_name),
+                    setDistrict(details.address_components[2].short_name),
+                    setCity(details.address_components[3].short_name),
+                    setState(details.address_components[4].short_name),
+                    setCEP(details.address_components[6].short_name),
+                    setLat(details.geometry.location.lat),
+                    setLong(details.geometry.location.lng),
+                ]
+            }}
+            fetchDetails={true}
+            query={{
+                key: apiKey,
+                language: 'pt-BR',
+            }}
+        />);
+    }
+
+    return (
+        <>
+            <GlobalStyle>
+                <ScrollView
+                    style={{ marginTop: getStatusBarHeight() }}
+                    keyboardShouldPersistTaps='always'
+                >
+                    <ContainerTop style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+                        <Container
+                            pb
+                            style={{
+                                flexDirection: 'column',
+                                alignItems: 'flex-start',
+                                justifyContent: 'center',
+                                width: '100%',
+                            }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+                                <TouchableOpacity
+                                    onPress={() => navigation.goBack()}
+                                    style={{
+                                        position: 'relative',
+                                        alignSelf: 'flex-start',
+                                        marginTop: '40%',
+                                        marginLeft: '15%',
+                                        alignContent: 'flex-start',
+                                        alignItems: 'flex-start',
+                                    }}>
+                                    <FontAwesome5
+                                        name='chevron-left'
+                                        color={theme.colors.white}
+                                        size={50}
+                                    />
+                                </TouchableOpacity>
+                                <Image
+                                    source={logo}
+                                    resizeMode='contain'
+                                    style={{
+                                        alignSelf: 'center',
+                                        width: 200,
+                                        height: 200,
+                                        marginTop: -30,
+                                        marginBottom: -50,
+                                        marginRight: '25%',
+                                        marginLeft: 'auto',
+                                    }}
+                                />
+                            </View>
+                            <Text style={styles.textStyleF}>
+                                RoboComp - Cadastrar Usuário
+                            </Text>
+                        </Container>
+                    </ContainerTop>
+                    <View>
+                        <PanelSlider style={{ marginTop: 20 }}>
+                            {/* Passo 1 */}
+                            {/* GroupControl Primeiro Nome */}
+                            <GroupControl>
+                                <Input
+                                    mode='flat'
+                                    label='Primeiro Nome'
+                                    value={nome}
+                                    onChangeText={text => setNome(text)}
+                                    underlineColor={theme.colors.black}
+                                    allowFontScaling
+                                    onBlur={() => setNomeBlur(true)}
+                                    onFocus={() => setNomeBlur(false)}
+                                    onSubmitEditing={() => { fullNameRef.current.focus() }}
+                                />
+                                <InputWarning
+                                    text='Campo obrigatório'
+                                    valid={checkError(nome === '')}
+                                    visible={nomeBlur}
+                                />
+                            </GroupControl>
+
+                            <GroupControl>
+                                <Input
+                                    ref={fullNameRef}
+                                    mode='flat'
+                                    label='Sobrenome'
+                                    value={fullName}
+                                    onChangeText={text => setFullName(text)}
+                                    underlineColor={theme.colors.black}
+                                    allowFontScaling
+                                    onBlur={() => setFullNameBlur(true)}
+                                    onFocus={() => setFullNameBlur(false)}
+                                    onSubmitEditing={() => { telefoneRef.current._inputElement.focus() }}
+                                />
+                                <InputWarning
+                                    text='Campo obrigatório'
+                                    valid={checkError(nome === '')}
+                                    visible={fullNameBlur}
+                                />
+                            </GroupControl>
+
+                            {/* Passo 3 */}
+                            {/* GroupControl Telefone */}
+                            <GroupControl>
+                                <TextInputMask
+                                    type='cel-phone'
+                                    options={{
+                                        maskType: 'BRL',
+                                        withDDD: true,
+                                        dddMask: '(99) ',
+                                    }}
+                                    customTextInput={Input}
+                                    customTextInputProps={{
+                                        mode: 'flat',
+                                        label: 'Telefone',
+                                        underlineColor: theme.colors.black,
+                                        allowFontScaling: true,
+                                    }}
+                                    ref={telefoneRef}
+                                    placeholder='DDD + número'
+                                    value={phone}
+                                    onChangeText={text => setPhone(text)}
+                                    onBlur={() => { setPhoneBlur(true) }}
+                                    onSubmitEditing={() => emailInputRef.current.focus()}
+                                />
+                                <InputWarning
+                                    text='Campo obrigatório'
+                                    valid={checkError(phone === '')}
+                                    visible={phoneBlur}
+                                />
+                            </GroupControl>
+
+                            {/* GroupControl Email */}
+                            <GroupControl>
+                                <Input
+                                    ref={emailInputRef}
+                                    mode='flat'
+                                    keyboardType='email-address'
+                                    autoCapitalize='none'
+                                    label='Email'
+                                    value={email}
+                                    onChangeText={text => setEmail(text)}
+                                    underlineColor={theme.colors.black}
+                                    allowFontScaling
+                                    onBlur={() => { setEmailBlur(true) }}
+                                    onFocus={() => { setEmailBlur(false) }}
+                                    onSubmitEditing={() => passwordInputRef.current.focus()}
+                                />
+                                <InputWarning
+                                    text='Campo obrigatório'
+                                    valid={checkError(email === '')}
+                                    visible={emailBlur}
+                                />
+                                <InputWarning
+                                    text='Email inválido'
+                                    valid={checkError(email !== '' && !emailValidator.validate(email))}
+                                    visible={emailBlur}
+                                />
+                            </GroupControl>
+
+                            {/* GroupControl Senha */}
+                            <GroupControl>
+                                <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                    <Input
+                                        ref={passwordInputRef}
+                                        style={{ width: '90%' }}
+                                        mode='flat'
+                                        label='Senha'
+                                        value={password}
+                                        placeholder='Mínimo de 6 dígitos'
+                                        secureTextEntry={seePassword}
+                                        onChangeText={text => { setPassword(text); setPass(text.length); }}
+                                        underloneColor={theme.colors.black}
+                                        allowFontScaling
+                                        onBlur={() => setPasswordBlur(true)}
+                                        onFocus={() => setPasswordBlur(true)}
+                                        onSubmitEditing={() => confirmPasswordInputRef.current.focus()}
+                                    />
+                                    <TouchableNativeFeedback
+                                        onPressIn={() => setSeePassword(false)}
+                                        onPressOut={() => setSeePassword(true)}
+                                    >
+                                        <FontAwesome5
+                                            name={(seePassword) ? 'eye-slash' : 'eye'}
+                                            color={theme.colors.contrast}
+                                            size={30}
                                         />
-                                    </View>
-                                    <InputWarning
-                                        text="Campo Obrigatório"
-                                        valid={checkError(cpf.value === '')}
-                                        visible={cpf.blurred}
+                                    </TouchableNativeFeedback>
+                                </View>
+                                <InputWarning
+                                    text='Campo obrigatório'
+                                    valid={checkError(password === '')}
+                                    visible={passwordBlur}
+                                />
+                                <InputWarning
+                                    text='Senha muito pequena'
+                                    valid={checkError(pass < 6 && password !== '')}
+                                    visible={passwordBlur}
+                                />
+                            </GroupControl>
+
+                            {/* GroupControl Confirmar Senha */}
+                            <GroupControl>
+                                <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                    <Input
+                                        style={{ width: '90%' }}
+                                        mode='flat'
+                                        label='Confirmar senha'
+                                        value={confirmPassword}
+                                        secureTextEntry={seeConfirmPassword}
+                                        onChangeText={text => setConfirmPassword(text)}
+                                        underlineColor={theme.colors.black}
+                                        allowFontScaling
+                                        onBlur={() => setConfirmPasswordBlur(true)}
+                                        onFocus={() => setConfirmPasswordBlur(true)}
+                                        ref={confirmPasswordInputRef}
+                                        onSubmitEditing={() => { }}
                                     />
-                                    <InputWarning
-                                        text="CNPJ Inválido"
-                                        valid={checkError(!cnpjValidator.isValid(cpf.value) && cpf.value !== '')}
-                                        visible={cpf.blurred}
-                                    />
-                                    <InputWarning
-                                        text="CNPJ já cadastrado"
-                                        valid={checkError(v)}
-                                        visible={v}
-                                    />
-                                </GroupControl>
-                                :
-                                <View style={{ flexDirection: 'column', width: '100%' }}>
-                                    {/* GroupControl passo 2 com CPF */}
+                                    <TouchableNativeFeedback
+                                        onPressIn={() => setSeeConfirmPassword(false)}
+                                        onPressOut={() => setSeeConfirmPassword(true)}
+                                    >
+                                        <FontAwesome5
+                                            name={(seeConfirmPassword) ? 'eye-slash' : 'eye'}
+                                            color={theme.colors.contrast}
+                                            size={30}
+                                        />
+                                    </TouchableNativeFeedback>
+                                </View>
+                                <InputWarning
+                                    text='Campo obrigatório'
+                                    valid={checkError(confirmPassword === '')}
+                                    visible={confirmPasswordBlur}
+                                />
+                                <InputWarning
+                                    text='Senhas não conferem'
+                                    valid={checkError(confirmPassword !== password)}
+                                    visible={confirmPasswordBlur}
+                                />
+                            </GroupControl>
+
+                            {/* GroupControl CPF/CNPJ */}
+                            <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                alignSelf: 'center',
+                                width: '100%',
+                                justifyContent: 'center',
+                                height: 'auto',
+                            }}>
+                                {(!filter) ?
                                     <GroupControl>
+                                        {/* GroupControl passo 2 com CNPJ */}
                                         <View style={{ flexDirection: 'column', width: '100%' }}>
-                                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                                                 <Text style={{ marginHorizontal: 10 }}>CNPJ</Text>
                                                 <TouchableOpacity
                                                     style={styles.anuncioIcon}
-                                                    onPress={() => { setFilter(!filter) }}
+                                                    onPress={() => { setFilter(!filter), setCPF(String(cpf).slice(0, 14)) }}
                                                 >
                                                     <FontAwesome5
-                                                        name='toggle-on'
+                                                        name='toggle-off'
                                                         color={theme.colors.green}
                                                         size={25}
                                                     />
@@ -465,131 +427,229 @@ export function ClientRegister({ navigation }: StackScreenProps<ParamListBase>) 
                                             <TextInputMask
                                                 type={'custom'}
                                                 options={{
-                                                    mask: '999.999.999-99',
+                                                    mask: '99.999.999/9999-99',
                                                 }}
                                                 customTextInput={Input}
-                                                placeholder='000.000.000-00'
                                                 customTextInputProps={{
                                                     mode: 'flat',
-                                                    label: 'CPF',
+                                                    label: 'CNPJ',
                                                     underlineColor: theme.colors.black,
                                                     allowFontScaling: true,
                                                 }}
-                                                value={cpf.value}
-                                                onChangeText={text => cpf.set(text)}
-                                                onBlur={() => { cpf.onBlur; setV(false) }}
+                                                placeholder='00.000.000/0000.00'
+                                                value={cpf}
+                                                onChangeText={text => setCPF(text)}
+                                                onBlur={() => { setCPFBlur(true); setV(false) }}
                                                 ref={cpfInputRef}
                                                 onSubmitEditing={() => {
-                                                    console.log(cpf.value.replace(/[^0-9]+/g, ''));
+                                                    console.log(String(cpf).replace(/[^0-9]+/g, ''));
                                                     setV(false);
                                                 }}
                                             />
-                                            <InputWarning
-                                                text="Campo Obrigatório"
-                                                valid={checkError(cpf.value === '')}
-                                                visible={cpf.blurred}
-                                            />
-                                            <InputWarning
-                                                text="CPF Inválido"
-                                                valid={checkError(!cpfValidator.isValid(cpf.value)) && cpf.value !== ''}
-                                                visible={cpf.blurred}
-                                            />
-                                            <InputWarning
-                                                text="CPF já cadastrado"
-                                                valid={checkError(v)}
-                                                visible={v}
-                                            />
                                         </View>
-                                    </GroupControl>
-                                    {/* GroupControl sexo */}
-                                    <GroupControl>
-                                        <Text>Sexo:</Text>
-                                        <Picker
-                                            selectedValue={gender.value}
-                                            onValueChange={(itemValue, itemIndex) => gender.set(itemValue)}>
-                                            <Picker.Item label="Não quero informar" value="" />
-                                            <Picker.Item label="Masculino" value="masculino" />
-                                            <Picker.Item label="Feminino" value="feminino" />
-                                        </Picker>
-                                    </GroupControl>
-                                    {/* GroupControl Data de Nascimento */}
-                                    <GroupControl>
-                                        <TextInputMask
-                                            type="datetime"
-                                            options={{
-                                                format: 'DD/MM/YYYY',
-                                            }}
-                                            customTextInput={Input}
-                                            placeholder='DD/MM/YYYY'
-                                            customTextInputProps={{
-                                                mode: 'flat',
-                                                label: 'Data de nascimento',
-                                                underlineColor: theme.colors.black,
-                                                allowFontScaling: true,
-                                            }}
-                                            value={birthday.value}
-                                            onChangeText={text => birthday.set(text)}
-                                            onBlur={birthday.onBlur}
-                                            onSubmitEditing={() => {
-                                                checkError(birthday.value === '');
-                                            }}
+                                        <InputWarning
+                                            text="Campo Obrigatório"
+                                            valid={checkError(cpf === '')}
+                                            visible={CPFBlur}
                                         />
                                         <InputWarning
-                                            text="Campo obrigatório"
-                                            valid={checkError(birthday.value === '')}
-                                            visible={birthday.blurred}
+                                            text="CNPJ Inválido"
+                                            valid={checkError(!cnpjValidator.isValid(cpf) && cpf !== '')}
+                                            visible={CPFBlur}
                                         />
                                         <InputWarning
-                                            text="Data em formato inválido, utilize o padrão DD/MM/YYYY"
-                                            valid={checkError(!/\d\d\/\d\d\/\d\d\d\d/.test(birthday.value))}
-                                            visible={birthday.blurred}
+                                            text="CNPJ já cadastrado"
+                                            valid={checkError(v)}
+                                            visible={v}
                                         />
                                     </GroupControl>
-                                </View>
-                            }
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                            <View style={{ flex: 1, height: 1, backgroundColor: '#A2A2A2' }} />
-                            <View>
-                                <Text style={{ width: 70, textAlign: 'center', color: '#A2A2A2' }}>Endereço</Text>
+                                    :
+                                    <View style={{ flexDirection: 'column', width: '100%' }}>
+                                        {/* GroupControl passo 2 com CPF */}
+                                        <GroupControl>
+                                            <View style={{ flexDirection: 'column', width: '100%' }}>
+                                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                                    <Text style={{ marginHorizontal: 10 }}>CNPJ</Text>
+                                                    <TouchableOpacity
+                                                        style={styles.anuncioIcon}
+                                                        onPress={() => { setFilter(!filter) }}
+                                                    >
+                                                        <FontAwesome5
+                                                            name='toggle-on'
+                                                            color={theme.colors.green}
+                                                            size={25}
+                                                        />
+                                                    </TouchableOpacity>
+                                                    <Text style={{ marginHorizontal: 10 }}>CPF</Text>
+                                                </View>
+
+                                                <TextInputMask
+                                                    type={'custom'}
+                                                    options={{
+                                                        mask: '999.999.999-99',
+                                                    }}
+                                                    customTextInput={Input}
+                                                    placeholder='000.000.000-00'
+                                                    customTextInputProps={{
+                                                        mode: 'flat',
+                                                        label: 'CPF',
+                                                        underlineColor: theme.colors.black,
+                                                        allowFontScaling: true,
+                                                    }}
+                                                    value={cpf}
+                                                    onChangeText={text => setCPF(text)}
+                                                    onBlur={() => { cpf; setV(false) }}
+                                                    ref={cpfInputRef}
+                                                    onSubmitEditing={() => {
+                                                        console.log(String(cpf).replace(/[^0-9]+/g, ''));
+                                                        setV(false);
+                                                    }}
+                                                />
+                                                <InputWarning
+                                                    text="Campo Obrigatório"
+                                                    valid={checkError(cpf === '')}
+                                                    visible={CPFBlur}
+                                                />
+                                                <InputWarning
+                                                    text="CPF Inválido"
+                                                    valid={checkError(!cpfValidator.isValid(cpf)) && cpf !== ''}
+                                                    visible={CPFBlur}
+                                                />
+                                                <InputWarning
+                                                    text="CPF já cadastrado"
+                                                    valid={checkError(v)}
+                                                    visible={v}
+                                                />
+                                            </View>
+                                        </GroupControl>
+
+                                        {/* GroupControl Data de Nascimento */}
+                                        <GroupControl>
+                                            <TextInputMask
+                                                type='datetime'
+                                                options={{ format: 'DD/MM/YYYY' }}
+                                                customTextInput={Input}
+                                                placeholder='DD/MM/YYYY'
+                                                customTextInputProps={{
+                                                    mode: 'flat',
+                                                    label: 'Data de Nascimento',
+                                                    underlineColor: theme.colors.black,
+                                                    allowFontScaling: true,
+                                                }}
+                                                value={birthDay}
+                                                onChangeText={text => { setBirthDay(text) }}
+                                                onBlur={() => setBirthDayBlur(true)}
+                                                onFocus={() => setBirthDayBlur(false)}
+                                            />
+                                            <InputWarning
+                                                text="Campo obrigatório"
+                                                valid={checkError(birthDay === '')}
+                                                visible={birthDayBlur}
+                                            />
+                                            <InputWarning
+                                                text="Data em formato inválido, utilize o padrão DD/MM/YYYY"
+                                                valid={checkError(!/\d\d\/\d\d\/\d\d\d\d/.test(birthDay))}
+                                                visible={birthDayBlur}
+                                            />
+                                        </GroupControl>
+                                    </View>
+                                }
                             </View>
-                            <View style={{ flex: 1, height: 1, backgroundColor: '#A2A2A2' }} />
-                        </View>
-                        {/* Passo 3 */}
-                        {/* GroupControl Endereço */}
-                        {/* <GroupControl>
-                            <AddressForm
-                                address={address.value}
-                                number={number.value}
-                                complement={complement.value}
-                                neighborhood={district.value}
-                                city={city.value}
-                                state={state.value}
-                                cep={cep.value}
-                                setAddress={address.set}
-                                setNumber={number.set}
-                                setComplement={complement.set}
-                                setNeighborhood={district.set}
-                                setCity={city.set}
-                                setState={state.set}
-                                setCep={cep.set}
-                                setLatitude={latitude.set}
-                                setLongitude={longitude.set}
-                            />
-                        </GroupControl> */}
-                        <GroupControl>
+
+                            {/* Passo 2 */}
+                            {/* GroupControl da Localização */}
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                                <View style={{ flex: 1, height: 1, backgroundColor: '#A2A2A2' }} />
+                                <View>
+                                    <Text style={{ width: 70, textAlign: 'center', color: '#A2A2A2' }}>Endereço</Text>
+                                </View>
+                                <View style={{ flex: 1, height: 1, backgroundColor: '#A2A2A2' }} />
+                            </View>
+
+                            <View>
+                                {localization()}
+                                <InputWarning
+                                    text='Endereço Inválido'
+                                    valid={checkError(address === '')}
+                                    visible={address === ''}
+                                />
+                                <GroupControl>
+                                    {(address === '') ?
+                                        <View /> :
+                                        <>
+                                            <Input
+                                                style={{ width: '90%' }}
+                                                mode='flat'
+                                                label='Rua'
+                                                value={address}
+                                                underlineColor={theme.colors.black}
+                                                allowFontScaling
+                                                disabled={true}
+                                            />
+                                            <Input
+                                                style={{ width: '90%' }}
+                                                mode='flat'
+                                                label='Número'
+                                                value={number}
+                                                underlineColor={theme.colors.black}
+                                                onChangeText={(text) => setNumber(text)}
+                                                allowFontScaling
+                                            />
+                                            <Input
+                                                style={{ width: '90%' }}
+                                                mode='flat'
+                                                label='Complemento'
+                                                value={complement}
+                                                underlineColor={theme.colors.black}
+                                                onChangeText={(text) => setComplement(text)}
+                                                allowFontScaling
+                                            />
+                                            <Input
+                                                style={{ width: '90%' }}
+                                                mode='flat'
+                                                label='Bairro'
+                                                value={district}
+                                                underlineColor={theme.colors.black}
+                                                allowFontScaling
+                                                disabled={true}
+                                            />
+                                            <Input
+                                                style={{ width: '90%' }}
+                                                mode='flat'
+                                                label='Cidade'
+                                                value={city}
+                                                underlineColor={theme.colors.black}
+                                                allowFontScaling
+                                                disabled={true}
+                                            />
+                                            <Input
+                                                style={{ width: '90%' }}
+                                                mode='flat'
+                                                label='Estado'
+                                                value={state}
+                                                underlineColor={theme.colors.black}
+                                                allowFontScaling
+                                                disabled={true}
+                                            />
+                                        </>
+                                    }
+                                </GroupControl>
+                            </View>
+
+                            <GroupControl>
                                 <Button
-                                    onPress={()=>console.log('submit')}
-                                    disabled={hasErrors}
-                                    text="ENVIAR"
+                                    onPress={submit}
+                                    // disabled={hasErrors}
+                                    text='ENVIAR'
                                     fullWidth
                                     loading={loading}
                                     backgroundColor={theme.colors.newcolor}
                                 />
                             </GroupControl>
-                    </PanelSlider>
-                </View>
-            </KeyboardAwareScrollView>
-        </GlobalStyle>
+                        </PanelSlider>
+                    </View>
+                </ScrollView>
+            </GlobalStyle>
+        </>
     );
 }

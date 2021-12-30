@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, Image, StyleSheet, Text } from 'react-native';
 import GlobalContext from 'src/context';
-import { useStateLink } from '@hookstate/core';
 
 const {
     cadastro: { categoryIdsRef },

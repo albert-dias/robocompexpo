@@ -10,7 +10,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useStateLinkUnmounted } from '@hookstate/core';
 
 // Import de páginas
 import { Input } from '../../components/GlobalCSS';

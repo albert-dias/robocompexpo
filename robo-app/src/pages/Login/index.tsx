@@ -1,11 +1,9 @@
 // Import de pacotes
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, Text, TouchableNativeFeedback, View } from 'react-native';
+import { Image, TouchableNativeFeedback, View } from 'react-native';
 import { useSpring, animated } from 'react-spring';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as easings from 'd3-ease';
-import { useStateLink } from '@hookstate/core';
-import { hideMessage, showMessage } from 'react-native-flash-message';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 // Import de páginas
@@ -15,15 +13,10 @@ import { PanelTitle } from '../../components/GlobalCSS';
 import { Button } from '../../components/Button';
 import { Button2 } from '../../components/Button';
 import theme from '../../global/styles/theme';
-import GlobalContext from '../../context';
-import useWithTouchable from '../../util/useWithTouchable';
 import { InputWarning } from '../../components/InputWarning';
-import request from '../../util/request';
-import useToken from '../../util/useToken';
-import { StateUser } from '../../context/auth';
-import { FCWithAppStackNavigator } from '../AppStackNavigator';
 import GlobalStyle from '../../components/GlobalStyle';
 import { GroupControl, Input, TitleView, TitleWrapper } from '../../components/GlobalCSS';
+import { useAuth } from '../../hooks/auth';
 
 // Import de imagens
 import logo from '../../../assets/images/logo_branca_robocomp.png';
@@ -36,24 +29,21 @@ const AnimatedTitleWrapper = animated(TitleWrapper);
 const AnimatedTitleView = animated(TitleView);
 const AnimatedPanelSlider = animated(PanelSlider);
 
-const {
-    login: {
-        passwordRef,
-        userTypeRef,
-        cpfRef,
-    },
-} = GlobalContext;
-
-// let passwordRef, userTypeRef, cpfRef;
-
 export function Login({ navigation }: StackScreenProps<ParamListBase>) {
-    const cpf = useWithTouchable(cpfRef);
-    const password = useWithTouchable(passwordRef);
-    // const token = useToken();
 
-    const senhaInput = useRef(null);
-    const cpfInput = useRef(null);
+    const { signIn } = useAuth();
+
+    // Variáveis com informações
+    const [cpf, setCPF] = useState('');
+    const [password, setPassword] = useState('');
     const [seePassword, setSeePassword] = useState(true);
+
+    // Variáveis com informações
+    const [cpfBlur, setCPFBlur] = useState(false);
+    const [passwordBlur, setPasswordBlur] = useState(false);
+
+    const senhaInputRef = useRef(null);
+    const cpfInputRef = useRef(null);
 
     let hasError = false;
 
@@ -62,7 +52,7 @@ export function Login({ navigation }: StackScreenProps<ParamListBase>) {
             hasError = true;
         }
         return flag;
-    };
+    }
 
     const [opacity, setOpacity] = useSpring(() => ({ opacity: 0 }));
     const [titleWrapper, setTitleWrapper] = useSpring(() => ({
@@ -74,30 +64,12 @@ export function Login({ navigation }: StackScreenProps<ParamListBase>) {
     }));
     const [loading, setLoading] = useState(false);
 
-
     const submit = async () => {
-        interface SubmitRequest {
-            result?: {
-                token?: string | false;
-                user?: StateUser;
-            };
-        }
-        setLoading(true);
+        console.log(cpf);
         try {
-            console.log('LOGIN: ' + cpf.value + '\nSENHA: ' + password.value);
-        } catch (e) {
-            console.log(e);
-        }
-        setLoading(false);
+            signIn({ cpf, password });
+        } catch (e) { console.log('LOGIN: ' + e.response.data.message); }
     }
-
-    useEffect(() => {
-        const config = {
-            duration: 500,
-            easing: easings.easeCubicOut,
-        };
-        setPanelLeft.start({ config, left: 0 });
-    }, []);
 
     const moveTitleToTop = async () => {
         await new Promise((r) => setTimeout(r, 500));
@@ -132,6 +104,14 @@ export function Login({ navigation }: StackScreenProps<ParamListBase>) {
         showTitle();
     }, []);
 
+    useEffect(() => {
+        const config = {
+            duration: 500,
+            easing: easings.easeCubicOut,
+        };
+        setPanelLeft.start({ config, left: 0 });
+    }, []);
+
     return (
         <KeyboardAwareScrollView
             contentContainerStyle={{
@@ -154,44 +134,46 @@ export function Login({ navigation }: StackScreenProps<ParamListBase>) {
                         <PanelTitle>Acesso</PanelTitle>
                         <GroupControl>
                             <Input
-                                ref={cpfInput}
+                                ref={cpfInputRef}
                                 mode='flat'
                                 label='CPF/CNPJ'
-                                value={cpf.value}
-                                onChangeText={cpf.set}
-                                underlineColor='black'
+                                value={cpf}
+                                onChangeText={(text) => setCPF(text)}
+                                underlineColor={theme.colors.black}
                                 keyboardType='number-pad'
                                 autoCapitalize='none'
                                 allowFontScaling
-                                onBlur={cpf.onBlur}
-                                onSubmitEditing={() => senhaInput.current.focus()}
+                                onBlur={() => setCPFBlur(true)}
+                                onFocus={() => setCPFBlur(false)}
+                                onSubmitEditing={() => senhaInputRef.current.focus()}
                                 returnKeyType='next'
                             />
                             <InputWarning
-                                text='CPF/CPNJ não pode ficar vazio'
-                                valid={checkError(cpf.value === '')}
-                                visible={cpf.blurred}
+                                text='CPF/CNPJ não pode ficar vazio'
+                                valid={checkError(cpf === '')}
+                                visible={cpfBlur}
                             />
                             <InputWarning
-                                text='CPF/CPNJ inválido'
-                                valid={checkError(!cpfValidator.isValid(cpf.value) && !cnpjValidator.isValid(cpf.value))}
-                                visible={cpf.blurred}
+                                text='CPF/CNPJ inválido'
+                                valid={checkError(!cpfValidator.isValid(cpf) && !cnpjValidator.isValid(cpf))}
+                                visible={cpfBlur}
                             />
                         </GroupControl>
                         <GroupControl>
                             <View style={{ flexDirection: 'row', alignItems: 'flex-end', width: '90%' }}>
                                 <Input
-                                    ref={senhaInput}
+                                    ref={senhaInputRef}
                                     mode='flat'
                                     label='Senha'
-                                    value={password.value}
-                                    onChangeText={password.set}
-                                    underlineColor='black'
+                                    value={password}
+                                    onChangeText={text => setPassword(text)}
+                                    underlineColor={theme.colors.black}
                                     allowFontScaling
                                     textContentType='password'
                                     autoCompleteType='password'
                                     secureTextEntry={seePassword}
-                                    onBlur={password.onBlur}
+                                    onBlur={() => setPasswordBlur(true)}
+                                    onFocus={() => setPasswordBlur(false)}
                                     onSubmitEditing={submit}
                                 />
                                 <TouchableNativeFeedback
@@ -207,8 +189,8 @@ export function Login({ navigation }: StackScreenProps<ParamListBase>) {
                             </View>
                             <InputWarning
                                 text='Senha não pode ser vazia'
-                                valid={checkError(password.value === '')}
-                                visible={password.blurred}
+                                valid={checkError(password === '')}
+                                visible={passwordBlur}
                             />
                         </GroupControl>
                         <GroupControl>
@@ -234,7 +216,7 @@ export function Login({ navigation }: StackScreenProps<ParamListBase>) {
                                     backgroundColor={theme.colors.middlecolor}
                                 />
                                 <Button2
-                                    onPress={() => navigation.navigate('SelecionarPerfil') }
+                                    onPress={() => navigation.navigate('SelecionarPerfil')}
                                     text='CRIAR CONTA'
                                     backgroundColor={theme.colors.middlecolor}
                                 />
@@ -243,6 +225,5 @@ export function Login({ navigation }: StackScreenProps<ParamListBase>) {
                     </View>
                 </AnimatedPanelSlider>
             </GlobalStyle>
-        </KeyboardAwareScrollView>
-    );
+        </KeyboardAwareScrollView>);
 }

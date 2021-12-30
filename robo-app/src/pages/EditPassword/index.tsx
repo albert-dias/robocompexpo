@@ -4,21 +4,16 @@ import { Group, Image, ImageBackground, ScrollView, TouchableNativeFeedback, Vie
 import { Button, Text } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { hideMessage, showMessage } from 'react-native-flash-message';
-import { useStateLinkUnmounted } from '@hookstate/core';
 import { useNavigation } from '@react-navigation/native';
 
 // Import de páginas
 import { GroupControl, Input } from '../../components/GlobalCSS';
 import Container, { ContainerTop } from '../../components/Container';
 import notify from '../../util/notify';
-import useToken from '../../util/useToken';
 import theme from '../../global/styles/theme';
-import GlobalContext from '../../context';
-import useWithTouchable from '../../util/useWithTouchable';
 import request from '../../util/request';
 import Request from '../../interfaces/Request';
-import auth, { StateUser } from '../../context/auth';
-import styles from './style.ts';
+import styles from './style';
 
 // Import de imagens
 import imgBanner from '../../../assets/images/banner.png';

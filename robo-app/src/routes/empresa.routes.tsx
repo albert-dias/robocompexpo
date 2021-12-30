@@ -10,15 +10,19 @@ import { Home } from '../pages/EmpresaTIHome';
 import { Agenda } from '../pages/Agenda';
 import { EditPassword } from '../pages/EditPassword';
 import { Plans } from '../pages/Plans';
+
 import { YourServices } from '../pages/Services/yourServices';
 import { AcceptServices } from '../pages/Services/accept';
-import { AddService } from '../pages/Services/add';
+import { AddServices } from '../pages/Services/add';
+import { ShowServices } from '../pages/Services/show';
+import { FollowServices } from '../pages/Services/follow';
+import { SearchServices } from '../pages/Services/search';
+import { TrackServices } from '../pages/Services/status';
+
 import { EditService } from '../pages/Services/edit';
 import { FinishedOS } from '../pages/Services/finishedOS';
 import { History } from '../pages/Services/history';
 import { InProgress } from '../pages/InProgress';
-import { SearchService } from '../pages/Services/search';
-import { TrackServices } from '../pages/Services/status';
 import { UserTerms } from '../pages/UserTerms';
 import { Profile } from '../pages/Profile';
 import { EditProfile } from '../pages/EditProfile';
@@ -41,13 +45,16 @@ const EmpresaRoutes: React.FC = () => (
         <Auth.Screen name="Plans" component={Plans} /> 
 
         <Auth.Screen name="AcceptServices" component={AcceptServices} />
-        <Auth.Screen name="AddServices" component={AddService} />
+        <Auth.Screen name="AddServices" component={AddServices} />
+        <Auth.Screen name="ShowServices" component={ShowServices} />
         <Auth.Screen name="YourServices" component={YourServices} />
         <Auth.Screen name="EditServices" component={EditService} />
+        <Auth.Screen name="SearchServices" component={SearchServices} />
+        <Auth.Screen name="FollowServices" component={FollowServices} />
+
         <Auth.Screen name="FinishedOS" component={FinishedOS} />
         <Auth.Screen name="History" component={History} />
         <Auth.Screen name="InProgress" component={InProgress} />
-        <Auth.Screen name="SearchServices" component={SearchService} />
         <Auth.Screen name="TrackServices" component={TrackServices} />
         <Auth.Screen name="UserTerms" component={UserTerms} />
         

@@ -7,6 +7,8 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ParamListBase } from '@react-navigation/native';
 
 // Import de páginas
 import Container, { ContainerTop } from '../../components/Container';
@@ -16,7 +18,7 @@ import theme from '../../global/styles/theme';
 import imgBanner from '../../../assets/images/banner.png';
 import logo from '../../../assets/images/logo_branca_robocomp.png';
 
-export function ShowService() {
+export function ShowServices({navigation} : StackScreenProps<ParamListBase>) {
     return (
         <>
             <View style={{ flexGrow: 1 }}>
@@ -50,7 +52,7 @@ export function ShowService() {
                                     }}
                                 />
                                 <TouchableOpacity
-                                    onPress={() => console.log('navigation.navigate(Home)')}
+                                    onPress={()=>navigation.goBack()}
                                     style={{
                                         position: 'absolute',
                                         alignSelf: 'flex-start',
@@ -74,9 +76,7 @@ export function ShowService() {
                         <View style={styles.botao}>
                             <TouchableOpacity
                                 activeOpacity={0.7}
-                                onPress={() => {
-                                    console.log('navigation.navigate(FollowServices)');
-                                }}>
+                                onPress={() => { navigation.navigate('FollowServices')}}>
                                 <LinearGradient
                                     colors={['#03A4A9', '#282D41']}
                                     start={{ x: 0.0, y: 1.0 }}

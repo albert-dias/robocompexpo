@@ -1,8 +1,8 @@
-import { StateRef, useStateLink } from '@hookstate/core';
+// import { StateRef, useStateLink } from '@hookstate/core';
 import { useState } from 'react';
 
-const useWithTouchable = <T>(ref: StateRef<T>) => {
-  const state = useStateLink<T>(ref);
+const useWithTouchable = <T>() => {
+  // const state = useStateLink<T>(ref);
   const [touched, setTouched] = useState(false);
   const [blurred, setBlurred] = useState(false);
 
@@ -15,11 +15,11 @@ const useWithTouchable = <T>(ref: StateRef<T>) => {
     if (blurred === true) {
       setBlurred(false);
     }
-    state.set(v);
+    // state.set(v);
   };
 
   return {
-    value: state.value,
+    // value: state.value,
     set,
     touched,
     blurred,

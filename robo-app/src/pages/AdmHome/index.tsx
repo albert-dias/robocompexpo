@@ -3,23 +3,27 @@ import React, { useEffect, useState } from 'react';
 import { Image, ImageBackground, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ParamListBase } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 // Import de páginas
 import Container, { ContainerTop } from '../../components/Container';
 import { Input } from '../../components/GlobalCSS';
 import theme from '../../global/styles/theme';
-import storage from '../../util/storage';
+import { useAuth } from '../../hooks/auth';
 
 // Import de imagens
 import imgBanner from '../../../assets/images/banner.png';
 import logo from '../../../assets/images/logo_branca_robocomp.png';
 
-export function AdmHome() {
+export function AdmHome({ navigation }: StackScreenProps<ParamListBase>) {
     // Variáveis
     const [list, setList] = useState(['']);
     const [filter, setFilter] = useState(false);
     const [name, setName] = useState('');
+
+    const { signOut } = useAuth();
 
     // Construção da página
     return (
@@ -57,7 +61,7 @@ export function AdmHome() {
                                 alignContent: 'flex-start',
                                 alignItems: 'flex-start'
                             }}
-                            onPress={async () => { console.log('Fazer logoff') }}
+                            onPress={async () => { signOut() }}
                         >
                             <FontAwesome5
                                 name='power-off'
@@ -104,7 +108,7 @@ export function AdmHome() {
                 <Text style={{ marginHorizontal: 10, marginTop: 5 }}>Clientes</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F4F1F0', justifyContent: 'center' }}>
-                <TouchableOpacity onPress={() => console.log('navegar para métricas')}>
+                <TouchableOpacity onPress={() => navigation.navigate('AdmMetrics')}>
                     <FontAwesome5
                         name='street-view'
                         color={theme.colors.contrast}

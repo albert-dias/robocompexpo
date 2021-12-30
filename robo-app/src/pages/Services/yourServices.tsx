@@ -4,6 +4,8 @@ import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from
 import { ScrollView } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ParamListBase } from '@react-navigation/native';
 
 // Import de páginas
 import Container, { ContainerTop } from '../../components/Container';
@@ -13,7 +15,7 @@ import theme from '../../global/styles/theme';
 import imgBanner from '../../../assets/images/banner.png';
 import logo from '../../../assets/images/logo_branca_robocomp.png';
 
-export function YourServices() {
+export function YourServices({ navigation }: StackScreenProps<ParamListBase>) {
     return (
         <>
             <View style={{ flexGrow: 1 }}>
@@ -46,7 +48,7 @@ export function YourServices() {
                                     }}
                                 />
                                 <TouchableOpacity
-                                    onPress={() => console.log('navigation.navigate(Home)')}
+                                    onPress={() => navigation.goBack()}
                                     style={{
                                         position: 'absolute',
                                         alignSelf: 'flex-start',
@@ -71,7 +73,7 @@ export function YourServices() {
                             <TouchableOpacity
                                 activeOpacity={0.7}
                                 onPress={() => {
-                                    console.log('navigation.navigate(SSAdd)');
+                                    navigation.navigate('AddServices');
                                 }}>
                                 <LinearGradient
                                     colors={theme.colors.gradientInvert}
@@ -90,7 +92,7 @@ export function YourServices() {
                             <TouchableOpacity
                                 activeOpacity={0.7}
                                 onPress={() => {
-                                    console.log('navigation.navigate(SSShow)');
+                                    navigation.navigate('SearchServices')
                                 }}>
                                 <LinearGradient
                                     colors={theme.colors.gradientInvert}
